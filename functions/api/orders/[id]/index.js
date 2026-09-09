@@ -1,7 +1,7 @@
 import { all, first, run } from "../../../lib/db.js";
 import { ok, error } from "../../../lib/response.js";
 import { requireAdmin } from "../../../lib/auth.js";
-import { enqueueOrderEvent } from "../../../lib/order-events.js";
+import { sendOrderStatusEmail } from "../../../lib/email.js";
 
 // GET /api/orders/:id
 //   :id can be the numeric order id (admin views) or the order_number
@@ -37,7 +37,7 @@ export async function onRequestGet({ request, params, env }) {
   return ok({ order, items, history });
 }
 
-export async function onRequestPatch({ request, params, env }) {
+export async function onRequestPatch({ request, params, env, waitUntil }) {
   const body = await request.json().catch(() => null);
   if (!body || !body.payment_reference) return error("payment_reference is required");
 
@@ -64,12 +64,11 @@ export async function onRequestPatch({ request, params, env }) {
     order.id
   );
 
-  await enqueueOrderEvent(env, {
-    type: "order_status_changed",
-    orderId: order.id,
-    previousStatus: "pending_payment",
-    newStatus: "payment_submitted",
-  });
+  waitUntil(
+    sendOrderStatusEmail(env, order.id, "pending_payment", "payment_submitted").catch((err) =>
+      console.error("Payment-submitted email failed:", err)
+    )
+  );
 
   return ok();
 }

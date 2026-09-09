@@ -2,7 +2,7 @@
   "name": "jewelry-shop",
   "version": "1.0.0",
   "private": true,
-  "description": "Handmade jewelry ecommerce site: static storefront + admin console on Cloudflare Pages, D1 database, Cloudflare Queues for branded transactional email with dead-letter redrive.",
+  "description": "Handmade jewelry ecommerce site: static storefront + admin console on Cloudflare Pages, D1 database, branded transactional email sent directly via Resend.",
   "scripts": {
     "dev": "wrangler pages dev",
     "deploy": "wrangler pages deploy public",

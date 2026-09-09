@@ -1,7 +1,7 @@
 import { all, first, run, generateOrderNumber } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
 import { requireAdmin } from "../../lib/auth.js";
-import { enqueueOrderEvent } from "../../lib/order-events.js";
+import { sendOrderConfirmationEmail } from "../../lib/email.js";
 
 // GET /api/orders  -> admin only: list all orders (optionally filter by status)
 // POST /api/orders -> public: place a new order from the cart/checkout page
@@ -23,7 +23,7 @@ export async function onRequestGet({ request, env }) {
   return ok({ orders });
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   const body = await request.json().catch(() => null);
   if (!body || !body.customer || !Array.isArray(body.items) || body.items.length === 0) {
     return error("customer and at least one item are required");
@@ -118,9 +118,11 @@ export async function onRequestPost({ request, env }) {
     orderId
   );
 
-  // Fire-and-forget onto the queue: the email-worker renders + sends the
-  // branded confirmation email and retries/redrives on failure.
-  await enqueueOrderEvent(env, { type: "order_created", orderId });
+  // Send the branded confirmation email in the background (waitUntil lets
+  // the response go back to the customer immediately instead of waiting on
+  // Resend); errors are caught and logged inside sendOrderConfirmationEmail
+  // itself so a slow/failing email never breaks order placement.
+  waitUntil(sendOrderConfirmationEmail(env, orderId).catch((err) => console.error("Order confirmation email failed:", err)));
 
   return ok({ order: { id: orderId, order_number: orderNumber, total_cents: totalCents, status: "pending_payment" } });
 }

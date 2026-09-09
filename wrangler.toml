@@ -3,30 +3,18 @@ compatibility_date = "2025-01-01"
 pages_build_output_dir = "public"
 
 # ---------------------------------------------------------------------------
-# D1 database binding (shared by the storefront/admin API functions below and
-# by the separate email-worker/ project).
-#
-# Create it once with:
-#   wrangler d1 create jewelry_shop_db
+# D1 database binding. Create it once with:
+#   npx wrangler d1 create jewelry_shop_db
 # then paste the returned database_id below.
 # ---------------------------------------------------------------------------
 [[d1_databases]]
 binding = "DB"
 database_name = "jewelry_shop_db"
-database_id = "9ee17707-1bb3-4754-bbae-5766d6517b49"
+database_id = "f804b190-4922-4667-8496-8ec0a8a9da16"
 
 # ---------------------------------------------------------------------------
-# Queue producer binding: every order-create / order-status-change enqueues a
-# message here instead of sending email inline. email-worker/ consumes it.
-# Create the queue once with:
-#   wrangler queues create order-events
-#   wrangler queues create order-events-dlq
-# ---------------------------------------------------------------------------
-[[queues.producers]]
-binding = "ORDER_EVENTS_QUEUE"
-queue = "order-events"
-
-# ---------------------------------------------------------------------------
-# Secrets (set with `wrangler pages secret put <NAME>`, not in this file):
-#   ADMIN_SESSION_SECRET   random 32+ char string, used to sign session ids
+# Secrets (set with `npx wrangler pages secret put <NAME>`, not in this file):
+#   RESEND_API_KEY   API key from https://resend.com — used to send branded
+#                    order confirmation / status-update emails directly from
+#                    functions/lib/email.js (no queue, no separate worker).
 # ---------------------------------------------------------------------------

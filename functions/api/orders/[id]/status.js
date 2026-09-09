@@ -1,7 +1,7 @@
 import { first, run } from "../../../lib/db.js";
 import { ok, error } from "../../../lib/response.js";
 import { requireAdmin } from "../../../lib/auth.js";
-import { enqueueOrderEvent } from "../../../lib/order-events.js";
+import { sendOrderStatusEmail } from "../../../lib/email.js";
 
 const VALID_STATUSES = [
   "pending_payment",
@@ -15,9 +15,9 @@ const VALID_STATUSES = [
 ];
 
 // PUT /api/orders/:id/status  { status, note, tracking_number, carrier } -> admin only
-// Every status change is logged to order_status_history and enqueues a
+// Every status change is logged to order_status_history and sends a
 // branded status-update email to the customer.
-export async function onRequestPut({ request, params, env }) {
+export async function onRequestPut({ request, params, env, waitUntil }) {
   const admin = await requireAdmin(request, env.DB);
   if (!admin) return error("Not authenticated", 401);
 
@@ -53,12 +53,11 @@ export async function onRequestPut({ request, params, env }) {
     admin.email
   );
 
-  await enqueueOrderEvent(env, {
-    type: "order_status_changed",
-    orderId: order.id,
-    previousStatus,
-    newStatus: body.status,
-  });
+  waitUntil(
+    sendOrderStatusEmail(env, order.id, previousStatus, body.status).catch((err) =>
+      console.error("Status-update email failed:", err)
+    )
+  );
 
   return ok();
 }
