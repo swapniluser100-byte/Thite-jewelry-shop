@@ -1,0 +1,13 @@
+# Cloudflare Pages redirect rules. A "200" status makes these rewrites (the
+# browser's address bar keeps the friendly path; Pages serves the target
+# file behind the scenes) rather than a visible redirect.
+#
+# Without this, visiting the bare domain (or /admin) 404s, since our actual
+# pages live under /html/ and /admin/html/ to keep files grouped by type.
+
+/                 /html/index.html         200
+/shop             /html/shop.html          200
+/cart             /html/cart.html          200
+/checkout         /html/checkout.html      200
+/admin            /admin/html/login.html   200
+/admin/           /admin/html/login.html   200
