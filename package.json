@@ -4,12 +4,12 @@
   "private": true,
   "description": "Handmade jewelry ecommerce site: static storefront + admin console on Cloudflare Pages, D1 database, branded transactional email sent directly via Resend.",
   "scripts": {
-    "dev": "wrangler pages dev",
-    "deploy": "wrangler pages deploy public",
-    "db:migrate:local": "wrangler d1 execute jewelry_shop_db --local --file=./migrations/0001_init.sql",
-    "db:migrate:remote": "wrangler d1 execute jewelry_shop_db --remote --file=./migrations/0001_init.sql",
-    "db:seed:local": "wrangler d1 execute jewelry_shop_db --local --file=./scripts/seed.sql",
-    "db:seed:remote": "wrangler d1 execute jewelry_shop_db --remote --file=./scripts/seed.sql",
+    "dev": "npx wrangler pages dev public",
+    "deploy": "npx wrangler pages deploy public",
+    "db:migrate:local": "npx wrangler d1 execute jewelry_shop_db --local --file=./migrations/0001_init.sql",
+    "db:migrate:remote": "npx wrangler d1 execute jewelry_shop_db --remote --file=./migrations/0001_init.sql",
+    "db:seed:local": "npx wrangler d1 execute jewelry_shop_db --local --file=./scripts/seed.sql",
+    "db:seed:remote": "npx wrangler d1 execute jewelry_shop_db --remote --file=./scripts/seed.sql",
     "create:admin": "node scripts/create-admin.js"
   },
   "devDependencies": {
