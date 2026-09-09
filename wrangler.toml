@@ -13,7 +13,7 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "jewelry_shop_db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "9ee17707-1bb3-4754-bbae-5766d6517b49"
 
 # ---------------------------------------------------------------------------
 # Queue producer binding: every order-create / order-status-change enqueues a

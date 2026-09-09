@@ -7,7 +7,7 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "jewelry_shop_db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "9ee17707-1bb3-4754-bbae-5766d6517b49"
 
 # Consumer side of the queue the Pages Functions produce to. max_retries
 # controls how many times Cloudflare redelivers a failed message before

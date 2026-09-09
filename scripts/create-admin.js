@@ -4,9 +4,10 @@
 // so this script prints the INSERT statement for you to run via wrangler
 // rather than writing to the database directly.
 //
-// Usage:
-//   node scripts/create-admin.js owner@example.com "a strong password" "Shop Owner"
-//   wrangler d1 execute jewelry_shop_db --remote --command "$(node scripts/create-admin.js ...)"
+// Usage (works the same in PowerShell, cmd, and bash — redirecting to a
+// file sidesteps shell-quoting differences that trip up --command):
+//   node scripts/create-admin.js "owner@example.com" "a strong password" "Shop Owner" > scripts/admin-seed.sql
+//   npx wrangler d1 execute jewelry_shop_db --remote --file=./scripts/admin-seed.sql
 
 const crypto = require("crypto");
 
