@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings — Admin Console</title>
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="admin-shell">
+    <nav class="admin-sidebar">
+      <div class="brand">Admin Console</div>
+      <a href="/admin/html/dashboard.html">Dashboard</a>
+      <a href="/admin/html/products.html">Products</a>
+      <a href="/admin/html/orders.html">Orders</a>
+      <a href="/admin/html/customers.html">Customers</a>
+      <a href="/admin/html/settings.html" class="active">Settings</a>
+      <a href="#" data-logout class="logout-link">Log out</a>
+    </nav>
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1>Settings</h1>
+        <span class="who">Signed in as <span data-admin-name>…</span></span>
+      </div>
+
+      <div class="card" style="max-width:640px;">
+        <h3 style="margin-top:0;">Branding</h3>
+        <div class="field">
+          <label for="site_name">Site name (used on the storefront and in emails)</label>
+          <input id="site_name" />
+        </div>
+        <div class="field">
+          <label for="brand_color">Brand color (hex)</label>
+          <input id="brand_color" />
+        </div>
+        <div class="field">
+          <label for="support_email">Support email shown to customers</label>
+          <input id="support_email" type="email" />
+        </div>
+        <div class="field">
+          <label for="from_email">"From" address for order emails (must be verified with your email provider)</label>
+          <input id="from_email" type="email" />
+        </div>
+      </div>
+
+      <div class="card" style="max-width:640px;">
+        <h3 style="margin-top:0;">Payment (QR code)</h3>
+        <p class="helper-text">Customers scan this at checkout instead of a card payment form.</p>
+        <div class="field">
+          <label for="payment_qr_image_url">QR code image URL</label>
+          <input id="payment_qr_image_url" placeholder="https://…/upi-qr.png" />
+        </div>
+        <div class="field">
+          <label for="payment_upi_id">UPI ID / payment handle shown under the QR code</label>
+          <input id="payment_upi_id" placeholder="yourshop@upi" />
+        </div>
+        <div class="field">
+          <label for="payment_instructions">Instructions shown to the customer</label>
+          <textarea id="payment_instructions" rows="3"></textarea>
+        </div>
+        <p class="helper-text">Upload your QR code image anywhere you like (e.g. an R2 bucket or image host) and paste the URL here.</p>
+      </div>
+
+      <p class="error-text" id="settings-error" style="display:none;"></p>
+      <p class="helper-text" id="settings-success" style="display:none; color:var(--a-success);">Saved.</p>
+      <button class="btn btn-primary" id="save-settings">Save settings</button>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin-api.js"></script>
+  <script src="/admin/js/admin-auth-guard.js"></script>
+  <script src="/admin/js/settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jewelry Shop — Handmade Jewelry</title>
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/home.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="/html/index.html" class="brand" data-site-name>Jewelry Shop</a>
+      <nav class="main-nav">
+        <a href="/html/index.html">Home</a>
+        <a href="/html/shop.html">Shop All</a>
+      </nav>
+      <div class="header-actions">
+        <a href="/html/cart.html" class="cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero__inner">
+      <h1>Handmade jewelry,<br />made to be worn every day.</h1>
+      <p class="hero__lede">Every piece is hand-finished in small batches — no two are quite the same.</p>
+      <a href="/html/shop.html" class="btn btn-primary">Shop the collection</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>New &amp; loved</h2>
+        <a href="/html/shop.html" class="helper-text">View all &rarr;</a>
+      </div>
+      <div class="product-grid" id="featured-grid">
+        <p class="helper-text">Loading products…</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span data-site-name>Jewelry Shop</span>
+      <span>Questions? <a data-support-email href="#">hello@example.com</a></span>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/cart-store.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/brand.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>

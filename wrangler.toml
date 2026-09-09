@@ -1,0 +1,32 @@
+name = "jewelry-shop"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "public"
+
+# ---------------------------------------------------------------------------
+# D1 database binding (shared by the storefront/admin API functions below and
+# by the separate email-worker/ project).
+#
+# Create it once with:
+#   wrangler d1 create jewelry_shop_db
+# then paste the returned database_id below.
+# ---------------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "jewelry_shop_db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# ---------------------------------------------------------------------------
+# Queue producer binding: every order-create / order-status-change enqueues a
+# message here instead of sending email inline. email-worker/ consumes it.
+# Create the queue once with:
+#   wrangler queues create order-events
+#   wrangler queues create order-events-dlq
+# ---------------------------------------------------------------------------
+[[queues.producers]]
+binding = "ORDER_EVENTS_QUEUE"
+queue = "order-events"
+
+# ---------------------------------------------------------------------------
+# Secrets (set with `wrangler pages secret put <NAME>`, not in this file):
+#   ADMIN_SESSION_SECRET   random 32+ char string, used to sign session ids
+# ---------------------------------------------------------------------------

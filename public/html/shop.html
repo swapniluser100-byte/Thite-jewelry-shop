@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shop — Jewelry Shop</title>
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/shop.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="/html/index.html" class="brand" data-site-name>Jewelry Shop</a>
+      <nav class="main-nav">
+        <a href="/html/index.html">Home</a>
+        <a href="/html/shop.html">Shop All</a>
+      </nav>
+      <div class="header-actions">
+        <a href="/html/cart.html" class="cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="shop-layout">
+        <aside class="shop-filters">
+          <h3>Categories</h3>
+          <ul id="category-list" class="filter-list">
+            <li><a href="/html/shop.html" class="active">All</a></li>
+          </ul>
+        </aside>
+        <div class="shop-main">
+          <div class="section-heading">
+            <h2 id="shop-title">All jewelry</h2>
+            <input type="search" id="search-input" placeholder="Search…" class="shop-search" />
+          </div>
+          <div class="product-grid" id="product-grid">
+            <p class="helper-text">Loading products…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span data-site-name>Jewelry Shop</span>
+      <span>Questions? <a data-support-email href="#">hello@example.com</a></span>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/cart-store.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/brand.js"></script>
+  <script src="/js/shop.js"></script>
+</body>
+</html>

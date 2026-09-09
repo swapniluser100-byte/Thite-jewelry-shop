@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Detail — Admin Console</title>
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+  <style>
+    .order-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+    .item-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--a-line); font-size: 0.9rem; }
+    .history-item { display: flex; gap: 10px; align-items: baseline; margin-bottom: 10px; font-size: 0.88rem; }
+    @media (max-width: 900px) { .order-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <nav class="admin-sidebar">
+      <div class="brand">Admin Console</div>
+      <a href="/admin/html/dashboard.html">Dashboard</a>
+      <a href="/admin/html/products.html">Products</a>
+      <a href="/admin/html/orders.html" class="active">Orders</a>
+      <a href="/admin/html/customers.html">Customers</a>
+      <a href="/admin/html/settings.html">Settings</a>
+      <a href="#" data-logout class="logout-link">Log out</a>
+    </nav>
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1 id="order-title">Order</h1>
+        <a href="/admin/html/orders.html" class="btn btn-outline">Back to orders</a>
+      </div>
+
+      <div class="order-grid" id="order-content">
+        <p class="helper-text">Loading…</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin-api.js"></script>
+  <script src="/admin/js/admin-auth-guard.js"></script>
+  <script src="/admin/js/order-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Product — Admin Console</title>
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+  <div class="admin-shell">
+    <nav class="admin-sidebar">
+      <div class="brand">Admin Console</div>
+      <a href="/admin/html/dashboard.html">Dashboard</a>
+      <a href="/admin/html/products.html" class="active">Products</a>
+      <a href="/admin/html/orders.html">Orders</a>
+      <a href="/admin/html/customers.html">Customers</a>
+      <a href="/admin/html/settings.html">Settings</a>
+      <a href="#" data-logout class="logout-link">Log out</a>
+    </nav>
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1 id="page-title">New product</h1>
+        <a href="/admin/html/products.html" class="btn btn-outline">Back to products</a>
+      </div>
+
+      <div class="card" style="max-width:640px;">
+        <form id="product-form">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" required />
+          </div>
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" rows="4"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="price">Price (in your currency, e.g. 1499.00)</label>
+              <input id="price" type="number" step="0.01" min="0" required />
+            </div>
+            <div class="field">
+              <label for="stock_qty">Stock quantity</label>
+              <input id="stock_qty" type="number" min="0" value="0" required />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="category_id">Category</label>
+              <select id="category_id"><option value="">No category</option></select>
+            </div>
+            <div class="field">
+              <label for="new_category">Or add new category</label>
+              <input id="new_category" placeholder="e.g. Earrings" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="image_url">Image URL</label>
+            <input id="image_url" placeholder="https://…" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" id="is_active" checked style="width:auto;display:inline-block;margin-right:8px;" />Visible in the shop</label>
+          </div>
+          <p class="error-text" id="product-error" style="display:none;"></p>
+          <div style="display:flex; gap:12px;">
+            <button type="submit" class="btn btn-primary" id="save-btn">Save product</button>
+            <button type="button" class="btn btn-danger" id="delete-btn" style="display:none;">Delete</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="/admin/js/admin-api.js"></script>
+  <script src="/admin/js/admin-auth-guard.js"></script>
+  <script src="/admin/js/product-edit.js"></script>
+</body>
+</html>
