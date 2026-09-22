@@ -1,16 +1,16 @@
 import { all, run } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
-import { requireAdmin } from "../../lib/auth.js";
+import { requireRole } from "../../lib/auth.js";
 
 // GET /api/categories  -> public
-// POST /api/categories -> admin only
+// POST /api/categories -> vendor or shop-admin
 export async function onRequestGet({ env }) {
   const rows = await all(env.DB, "SELECT * FROM categories ORDER BY name ASC");
   return ok({ categories: rows });
 }
 
 export async function onRequestPost({ request, env }) {
-  const admin = await requireAdmin(request, env.DB);
+  const admin = await requireRole(request, env.DB, ["vendor", "admin"]);
   if (!admin) return error("Not authenticated", 401);
 
   const body = await request.json().catch(() => null);

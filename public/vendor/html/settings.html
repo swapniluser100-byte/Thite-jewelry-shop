@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Settings — Admin Console</title>
-  <link rel="stylesheet" href="/admin/css/admin.css" />
+  <title>Settings — Vendor Portal</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/vendor/css/vendor.css" />
 </head>
 <body>
   <div class="admin-shell">
     <nav class="admin-sidebar">
-      <div class="brand">Admin Console</div>
-      <a href="/admin/html/dashboard.html">Dashboard</a>
-      <a href="/admin/html/products.html">Products</a>
-      <a href="/admin/html/orders.html">Orders</a>
-      <a href="/admin/html/customers.html">Customers</a>
-      <a href="/admin/html/settings.html" class="active">Settings</a>
+      <div class="brand">Vendor Portal</div>
+      <a href="/vendor/html/products.html">Products</a>
+      <a href="/vendor/html/settings.html" class="active">Settings</a>
       <a href="#" data-logout class="logout-link">Log out</a>
     </nav>
     <main class="admin-main">
@@ -28,6 +26,17 @@
         <div class="field">
           <label for="site_name">Site name (used on the storefront and in emails)</label>
           <input id="site_name" />
+        </div>
+        <div class="field">
+          <label for="logo_url">Logo image URL</label>
+          <div class="logo-field">
+            <div class="logo-preview" id="logo-preview">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+              <img id="logo-preview-img" alt="Logo preview" hidden />
+            </div>
+            <input id="logo_url" placeholder="https://…/logo.png" />
+          </div>
+          <p class="helper-text">Shown in place of the site name in the storefront header. Upload it anywhere you like (e.g. an image host) and paste the URL here. Recommended: a transparent PNG or SVG, roughly 240&times;80px.</p>
         </div>
         <div class="field">
           <label for="brand_color">Brand color (hex)</label>
@@ -58,7 +67,19 @@
           <label for="payment_instructions">Instructions shown to the customer</label>
           <textarea id="payment_instructions" rows="3"></textarea>
         </div>
-        <p class="helper-text">Upload your QR code image anywhere you like (e.g. an R2 bucket or image host) and paste the URL here.</p>
+      </div>
+
+      <div class="card" style="max-width:640px;">
+        <h3 style="margin-top:0;">Admin Console Access</h3>
+        <p class="helper-text">Control what your Admin Console staff logins can see and manage. Product configuration always stays available here in the Vendor Portal.</p>
+        <div class="field">
+          <label>Products tab</label>
+          <button type="button" class="status-toggle" id="admin-products-tab-toggle">
+            <span class="track"></span>
+            <span class="status-label">Visible</span>
+          </button>
+          <p class="helper-text">When off, Admin Console users won&rsquo;t see the Products tab or be able to add, edit or delete products.</p>
+        </div>
       </div>
 
       <p class="error-text" id="settings-error" style="display:none;"></p>
@@ -67,8 +88,9 @@
     </main>
   </div>
 
-  <script src="/admin/js/admin-api.js"></script>
-  <script src="/admin/js/admin-auth-guard.js"></script>
-  <script src="/admin/js/settings.js"></script>
+  <script src="/js/renewal-gate.js"></script>
+  <script src="/vendor/js/vendor-api.js"></script>
+  <script src="/vendor/js/vendor-auth-guard.js"></script>
+  <script src="/vendor/js/settings.js"></script>
 </body>
 </html>

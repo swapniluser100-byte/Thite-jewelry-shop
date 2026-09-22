@@ -1,12 +1,12 @@
 import { all, first, run } from "../../../lib/db.js";
 import { ok, error } from "../../../lib/response.js";
-import { requireAdmin } from "../../../lib/auth.js";
+import { requireRole } from "../../../lib/auth.js";
 import { sendOrderStatusEmail } from "../../../lib/email.js";
 
 // GET /api/orders/:id
 //   :id can be the numeric order id (admin views) or the order_number
 //   (customer-facing order-confirmation / lookup page).
-//   Admin session unlocks admin_notes + full customer PII; public callers get
+//   Shop-admin session unlocks admin_notes + full customer PII; public callers get
 //   a trimmed view.
 // PATCH /api/orders/:id  { payment_reference }  -> public: customer submits their
 //   UPI/bank transaction reference after paying via the QR code.
@@ -29,7 +29,7 @@ export async function onRequestGet({ request, params, env }) {
     order.id
   );
 
-  const admin = await requireAdmin(request, env.DB);
+  const admin = await requireRole(request, env.DB, ["admin"]);
   if (!admin) {
     delete order.admin_notes;
   }

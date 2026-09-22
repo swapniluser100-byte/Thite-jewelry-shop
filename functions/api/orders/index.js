@@ -1,12 +1,12 @@
 import { all, first, run, generateOrderNumber } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
-import { requireAdmin } from "../../lib/auth.js";
+import { requireRole } from "../../lib/auth.js";
 import { sendOrderConfirmationEmail } from "../../lib/email.js";
 
-// GET /api/orders  -> admin only: list all orders (optionally filter by status)
+// GET /api/orders  -> shop-admin only: list all orders (optionally filter by status)
 // POST /api/orders -> public: place a new order from the cart/checkout page
 export async function onRequestGet({ request, env }) {
-  const admin = await requireAdmin(request, env.DB);
+  const admin = await requireRole(request, env.DB, ["admin"]);
   if (!admin) return error("Not authenticated", 401);
 
   const url = new URL(request.url);
@@ -54,16 +54,27 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const shippingCents = subtotalCents >= 200000 ? 0 : 4900; // free shipping over 2000.00, else flat 49.00 (in the smallest currency unit *100)
   const totalCents = subtotalCents + shippingCents;
 
-  // Upsert the customer by email so repeat buyers accumulate order history.
-  let customerRow = await first(env.DB, "SELECT * FROM customers WHERE email = ?", customer.email.toLowerCase());
+  // Upsert the customer by email OR phone so repeat buyers accumulate order
+  // history even if they check out with a different email/phone combo than
+  // last time.
+  const normalizedEmail = customer.email.toLowerCase();
+  const normalizedPhone = (customer.phone || "").trim();
+  let customerRow = normalizedPhone
+    ? await first(
+        env.DB,
+        "SELECT * FROM customers WHERE email = ? OR (phone != '' AND phone = ?)",
+        normalizedEmail,
+        normalizedPhone
+      )
+    : await first(env.DB, "SELECT * FROM customers WHERE email = ?", normalizedEmail);
   if (!customerRow) {
     const res = await run(
       env.DB,
       `INSERT INTO customers (name, email, phone, address, city, state, postal_code, country)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       customer.name,
-      customer.email.toLowerCase(),
-      customer.phone || "",
+      normalizedEmail,
+      normalizedPhone,
       shipping.address || "",
       shipping.city || "",
       shipping.state || "",

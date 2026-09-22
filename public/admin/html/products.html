@@ -4,39 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Products — Admin Console</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/admin/css/admin.css" />
 </head>
-<body>
+<body data-gated-setting="admin_products_tab_enabled">
   <div class="admin-shell">
     <nav class="admin-sidebar">
       <div class="brand">Admin Console</div>
       <a href="/admin/html/dashboard.html">Dashboard</a>
-      <a href="/admin/html/products.html" class="active">Products</a>
-      <a href="/admin/html/orders.html">Orders</a>
       <a href="/admin/html/customers.html">Customers</a>
-      <a href="/admin/html/settings.html">Settings</a>
+      <a href="/admin/html/products.html" class="active" data-nav-products>Products</a>
+      <a href="/admin/html/orders.html">Orders</a>
       <a href="#" data-logout class="logout-link">Log out</a>
+      <a href="https://www.sitepragati.in/raise-request?customerId=asmcDHaHEEktePc" target="_blank" rel="noopener" class="maintenance-link">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Site Maintenance Request
+      </a>
+      <div class="sidebar-credit">Developed by SitePragati<br /><a href="mailto:support@sitepragati.in">support@sitepragati.in</a></div>
     </nav>
     <main class="admin-main">
       <div class="admin-topbar">
-        <h1>Products</h1>
+        <h1>Products Overview</h1>
         <span class="who">Signed in as <span data-admin-name>…</span></span>
       </div>
 
+      <div class="stat-grid" id="stat-grid"></div>
+
       <div class="toolbar">
         <span class="helper-text" id="product-count"></span>
-        <a href="/admin/html/product-edit.html" class="btn btn-primary">+ New product</a>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="search" id="product-search" class="search-input" placeholder="Search products…" />
+          <a href="/admin/html/product-edit.html" class="btn btn-primary">+ New product</a>
+        </div>
       </div>
 
       <div class="card">
         <table>
-          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="products-body"><tr><td colspan="6">Loading…</td></tr></tbody>
         </table>
+        <div class="pagination-bar" id="products-pagination"></div>
       </div>
     </main>
   </div>
 
+  <script src="/js/renewal-gate.js"></script>
   <script src="/admin/js/admin-api.js"></script>
   <script src="/admin/js/admin-auth-guard.js"></script>
   <script src="/admin/js/products.js"></script>

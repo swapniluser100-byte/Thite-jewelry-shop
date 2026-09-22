@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Customer Detail — Admin Console</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+  <style>
+    .customer-card__header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+    .customer-identity { display: flex; gap: 16px; align-items: center; }
+    .customer-avatar {
+      width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 1.25rem;
+    }
+    .customer-name { margin: 0 0 4px; font-size: 1.4rem; }
+    .customer-contact { margin: 0; color: var(--a-ink-soft); font-size: 0.92rem; }
+    .customer-meta { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .meta-row { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; color: var(--a-ink); }
+    .meta-row svg { color: var(--a-ink-soft); flex-shrink: 0; }
+    .customer-since { margin: 0; }
+    .order-id-link { font-weight: 600; color: var(--a-ink); }
+    .order-id-link:hover { color: var(--a-brand-dark); }
+    .stat-card .sub { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; margin-top: 6px; color: var(--a-ink-soft); }
+    .stat-card .sub--success { color: var(--a-success); }
+    .stat-card .sub--warn { color: var(--a-warn); }
+    .payment-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; font-weight: 600; }
+    .payment-status--paid { color: var(--a-success); }
+    .payment-status--pending { color: var(--a-warn); }
+    .payment-status--neutral { color: var(--a-ink-soft); }
+    @media (max-width: 640px) { .customer-card__header { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <nav class="admin-sidebar">
+      <div class="brand">Admin Console</div>
+      <a href="/admin/html/dashboard.html">Dashboard</a>
+      <a href="/admin/html/customers.html" class="active">Customers</a>
+      <a href="/admin/html/products.html" data-nav-products>Products</a>
+      <a href="/admin/html/orders.html">Orders</a>
+      <a href="#" data-logout class="logout-link">Log out</a>
+      <a href="https://www.sitepragati.in/raise-request?customerId=asmcDHaHEEktePc" target="_blank" rel="noopener" class="maintenance-link">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Site Maintenance Request
+      </a>
+      <div class="sidebar-credit">Developed by SitePragati<br /><a href="mailto:support@sitepragati.in">support@sitepragati.in</a></div>
+    </nav>
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1 id="customer-title">Customer</h1>
+        <a href="/admin/html/customers.html" class="btn btn-outline">Back to customers</a>
+      </div>
+
+      <div id="customer-content">
+        <p class="helper-text">Loading…</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/renewal-gate.js"></script>
+  <script src="/admin/js/admin-api.js"></script>
+  <script src="/admin/js/admin-auth-guard.js"></script>
+  <script src="/admin/js/customer-detail.js"></script>
+</body>
+</html>

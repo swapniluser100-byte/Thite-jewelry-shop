@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products — Vendor Portal</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/vendor/css/vendor.css" />
+</head>
+<body>
+  <div class="admin-shell">
+    <nav class="admin-sidebar">
+      <div class="brand">Vendor Portal</div>
+      <a href="/vendor/html/products.html" class="active">Products</a>
+      <a href="/vendor/html/settings.html">Settings</a>
+      <a href="#" data-logout class="logout-link">Log out</a>
+    </nav>
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1>Products Overview</h1>
+        <span class="who">Signed in as <span data-admin-name>…</span></span>
+      </div>
+
+      <div class="stat-grid" id="stat-grid"></div>
+
+      <div class="toolbar">
+        <span class="helper-text" id="product-count"></span>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="search" id="product-search" class="search-input" placeholder="Search products…" />
+          <a href="/vendor/html/product-edit.html" class="btn btn-primary">+ New product</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="products-body"><tr><td colspan="6">Loading…</td></tr></tbody>
+        </table>
+        <div class="pagination-bar" id="products-pagination"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/renewal-gate.js"></script>
+  <script src="/vendor/js/vendor-api.js"></script>
+  <script src="/vendor/js/vendor-auth-guard.js"></script>
+  <script src="/vendor/js/products.js"></script>
+</body>
+</html>

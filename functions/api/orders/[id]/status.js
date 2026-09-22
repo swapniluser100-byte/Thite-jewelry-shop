@@ -1,6 +1,6 @@
 import { first, run } from "../../../lib/db.js";
 import { ok, error } from "../../../lib/response.js";
-import { requireAdmin } from "../../../lib/auth.js";
+import { requireRole } from "../../../lib/auth.js";
 import { sendOrderStatusEmail } from "../../../lib/email.js";
 
 const VALID_STATUSES = [
@@ -18,7 +18,7 @@ const VALID_STATUSES = [
 // Every status change is logged to order_status_history and sends a
 // branded status-update email to the customer.
 export async function onRequestPut({ request, params, env, waitUntil }) {
-  const admin = await requireAdmin(request, env.DB);
+  const admin = await requireRole(request, env.DB, ["admin"]);
   if (!admin) return error("Not authenticated", 401);
 
   const body = await request.json().catch(() => null);

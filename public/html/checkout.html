@@ -4,21 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Checkout — Jewelry Shop</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/checkout.css" />
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header" data-site-header>
     <div class="container">
-      <a href="/html/index.html" class="brand" data-site-name>Jewelry Shop</a>
-      <nav class="main-nav">
-        <a href="/html/index.html">Home</a>
-        <a href="/html/shop.html">Shop All</a>
+      <a href="/html/index.html" class="brand"><img data-logo alt="" class="brand-logo" /><span data-site-name>Jewelry Shop</span></a>
+      <nav class="main-nav" data-main-nav>
+        <a href="/html/index.html" data-nav-link>Home</a>
+        <a href="/html/shop.html" data-nav-link>Shop All</a>
       </nav>
       <div class="header-actions">
-        <a href="/html/cart.html" class="cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
+        <a href="/html/cart.html" class="cart-link" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></svg>
+          <span class="cart-count" data-cart-count>0</span>
+        </a>
+        <button class="nav-toggle" data-nav-toggle type="button" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
+    <nav class="mobile-nav" data-mobile-nav>
+      <a href="/html/index.html" data-nav-link>Home</a>
+      <a href="/html/shop.html" data-nav-link>Shop All</a>
+      <a href="/html/cart.html" data-nav-link>Cart</a>
+    </nav>
   </header>
 
   <section class="section">
@@ -27,85 +39,145 @@
         <!-- Step 1: shipping/contact details + place order -->
         <div id="details-step">
           <h1>Checkout</h1>
-          <form id="checkout-form">
-            <h3>Contact</h3>
-            <div class="field">
-              <label for="name">Full name</label>
-              <input id="name" name="name" required />
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" required />
+          <form id="checkout-form" class="checkout-form-card">
+            <div class="checkout-form-section">
+              <div class="checkout-form-section__header">
+                <span class="checkout-form-section__icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                </span>
+                <h3>Contact</h3>
               </div>
               <div class="field">
-                <label for="phone">Phone</label>
-                <input id="phone" name="phone" required />
+                <label for="name">Full name</label>
+                <input id="name" name="name" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" required />
+                </div>
+                <div class="field">
+                  <label for="phone">Phone</label>
+                  <input id="phone" name="phone" required />
+                </div>
               </div>
             </div>
 
-            <h3>Shipping address</h3>
-            <div class="field">
-              <label for="address">Address</label>
-              <input id="address" name="address" required />
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="city">City</label>
-                <input id="city" name="city" required />
+            <div class="checkout-form-section">
+              <div class="checkout-form-section__header">
+                <span class="checkout-form-section__icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </span>
+                <h3>Shipping address</h3>
               </div>
               <div class="field">
-                <label for="state">State</label>
-                <input id="state" name="state" required />
+                <label for="address">Address</label>
+                <input id="address" name="address" required />
               </div>
-              <div class="field">
-                <label for="postal_code">PIN code</label>
-                <input id="postal_code" name="postal_code" required />
+              <div class="field-row">
+                <div class="field">
+                  <label for="city">City</label>
+                  <input id="city" name="city" required />
+                </div>
+                <div class="field">
+                  <label for="state">State</label>
+                  <input id="state" name="state" required />
+                </div>
+                <div class="field">
+                  <label for="postal_code">PIN code</label>
+                  <input id="postal_code" name="postal_code" required />
+                </div>
               </div>
-            </div>
-            <div class="field">
-              <label for="notes">Order notes (optional)</label>
-              <textarea id="notes" name="notes" rows="2"></textarea>
             </div>
 
-            <p class="error-text" id="checkout-error" style="display:none;"></p>
-            <button type="submit" class="btn btn-primary btn-block" id="place-order-btn">
-              Place order &mdash; pay by QR code next
-            </button>
+            <div class="checkout-form-section checkout-form-section--last">
+              <div class="field">
+                <label for="notes">Order notes (optional)</label>
+                <textarea id="notes" name="notes" rows="2"></textarea>
+              </div>
+
+              <p class="error-text" id="checkout-error" style="display:none;"></p>
+              <button type="submit" class="btn btn-primary btn-block" id="place-order-btn">
+                Place order &mdash; pay by QR code next &rarr;
+              </button>
+              <p class="checkout-form-security">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                Your information is safe and only used to fulfil this order
+              </p>
+            </div>
           </form>
         </div>
 
         <!-- Step 2: shown after the order is created; customer pays via QR then submits a reference -->
-        <div id="payment-step" style="display:none;">
-          <h1>Scan to pay</h1>
-          <p class="helper-text" id="payment-instructions"></p>
-          <div class="qr-box">
-            <img id="qr-image" src="" alt="Payment QR code" />
-            <p class="qr-upi" id="upi-id"></p>
-            <p class="qr-amount" id="qr-amount"></p>
-          </div>
-          <form id="payment-form">
-            <div class="field">
-              <label for="payment_reference">UPI / bank transaction reference (UTR)</label>
-              <input id="payment_reference" name="payment_reference" placeholder="e.g. 402816558211" required />
+        <div id="payment-step" class="payment-step" style="display:none;">
+          <div class="upi-card">
+            <div class="upi-card__header">
+              <div class="upi-card__icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round">
+                  <path d="M2 4 9 12 2 20" stroke="#dd7f22"/>
+                  <path d="M8 4 15 12 8 20" stroke="#4b7a52"/>
+                  <path d="M14 4 21 12 14 20" stroke="#1d4ed8"/>
+                </svg>
+              </div>
+              <div>
+                <h2>Pay with UPI</h2>
+                <p id="payment-instructions">Scan the QR code to complete your payment.</p>
+              </div>
             </div>
-            <p class="error-text" id="payment-error" style="display:none;"></p>
-            <button type="submit" class="btn btn-primary btn-block">I've paid — confirm order</button>
-          </form>
+            <div class="upi-card__qr-box">
+              <img id="qr-image" src="" alt="Payment QR code" />
+              <div class="upi-pill" id="upi-id"></div>
+              <div class="upi-amount" id="qr-amount"></div>
+            </div>
+            <div class="upi-card__tagline">
+              <span class="upi-wordmark upi-wordmark--light">UPI</span>
+              <span class="upi-card__divider">|</span>
+              <span>Safe &bull; Fast &bull; Secure</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <aside class="checkout-summary" id="checkout-summary"></aside>
     </div>
+    <div class="container" id="secure-note-wrap" style="display:none;">
+      <p class="secure-note" id="secure-note">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a9744f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Secure payment powered by <span class="upi-wordmark">UPI</span>
+      </p>
+    </div>
   </section>
 
   <footer class="site-footer">
-    <div class="container">
-      <span data-site-name>Jewelry Shop</span>
-      <span>Questions? <a data-support-email href="#">hello@example.com</a></span>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="/html/index.html" class="brand"><img data-logo alt="" class="brand-logo" /><span data-site-name>Jewelry Shop</span></a>
+        <p>Handmade jewelry, hand-finished in small batches &mdash; no two pieces are quite the same.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/html/index.html">Home</a></li>
+          <li><a href="/html/shop.html">Shop All</a></li>
+          <li><a href="/html/cart.html">Cart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li>Questions? <a data-support-email href="#">hello@example.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom-wrap">
+      <div class="container footer-bottom">
+        <span>&copy; <span data-footer-year></span> <span data-site-name>Jewelry Shop</span>. All rights reserved.</span>
+        <span>Developed by SitePragati &middot; <a href="mailto:support@sitepragati.in">support@sitepragati.in</a></span>
+      </div>
     </div>
   </footer>
 
+  <script src="/js/renewal-gate.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/cart-store.js"></script>
   <script src="/js/header.js"></script>

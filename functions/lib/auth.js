@@ -83,4 +83,29 @@ export async function requireAdmin(request, db) {
   return admin || null;
 }
 
+// Like requireAdmin, but only returns the user if their role is one of `roles`
+// — e.g. requireRole(request, db, ["vendor"]) keeps shop-admin sessions out
+// of vendor-only routes and vice versa.
+export async function requireRole(request, db, roles) {
+  const user = await requireAdmin(request, db);
+  if (!user || !roles.includes(user.role)) return null;
+  return user;
+}
+
+// Product write/list-all access, gated by a setting the vendor controls from
+// the Vendor Portal (Settings → Admin Console Access). Vendor sessions always
+// pass; shop-admin ("admin" role) sessions only pass while the vendor has left
+// the Products tab enabled. Returns { user, reason } instead of just the user
+// so callers can tell "not logged in" (401) apart from "disabled by vendor" (403).
+export async function requireProductAccess(request, db) {
+  const user = await requireRole(request, db, ["vendor", "admin"]);
+  if (!user) return { user: null, reason: "unauthenticated" };
+  if (user.role === "admin") {
+    const row = await db.prepare("SELECT value FROM settings WHERE key = ?").bind("admin_products_tab_enabled").first();
+    const enabled = row ? row.value !== "0" : true; // default on when unset (older DBs)
+    if (!enabled) return { user: null, reason: "disabled" };
+  }
+  return { user, reason: null };
+}
+
 export { SESSION_COOKIE };

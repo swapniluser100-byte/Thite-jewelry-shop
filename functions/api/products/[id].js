@@ -1,10 +1,11 @@
 import { first, run } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
-import { requireAdmin } from "../../lib/auth.js";
+import { requireProductAccess } from "../../lib/auth.js";
 
 // GET /api/products/:id     -> public (by numeric id or slug)
-// PUT /api/products/:id     -> admin only
-// DELETE /api/products/:id  -> admin only
+// PUT /api/products/:id     -> vendor, or shop-admin while the vendor has the
+//                              Admin Console Products tab turned on
+// DELETE /api/products/:id  -> same access rule as PUT
 export async function onRequestGet({ params, env }) {
   const idOrSlug = params.id;
   const isNumeric = /^\d+$/.test(idOrSlug);
@@ -20,8 +21,12 @@ export async function onRequestGet({ params, env }) {
 }
 
 export async function onRequestPut({ request, params, env }) {
-  const admin = await requireAdmin(request, env.DB);
-  if (!admin) return error("Not authenticated", 401);
+  const { user: admin, reason } = await requireProductAccess(request, env.DB);
+  if (!admin) {
+    return reason === "disabled"
+      ? error("Product management has been turned off for Admin Console users. Ask the vendor to re-enable it in the Vendor Portal.", 403)
+      : error("Not authenticated", 401);
+  }
 
   const body = await request.json().catch(() => null);
   if (!body) return error("Invalid body");
@@ -47,8 +52,12 @@ export async function onRequestPut({ request, params, env }) {
 }
 
 export async function onRequestDelete({ request, params, env }) {
-  const admin = await requireAdmin(request, env.DB);
-  if (!admin) return error("Not authenticated", 401);
+  const { user: admin, reason } = await requireProductAccess(request, env.DB);
+  if (!admin) {
+    return reason === "disabled"
+      ? error("Product management has been turned off for Admin Console users. Ask the vendor to re-enable it in the Vendor Portal.", 403)
+      : error("Not authenticated", 401);
+  }
   await run(env.DB, "DELETE FROM products WHERE id = ?", params.id);
   return ok();
 }

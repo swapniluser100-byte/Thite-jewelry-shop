@@ -10,7 +10,8 @@
     "db:migrate:remote": "npx wrangler d1 execute jewelry_shop_db --remote --file=./migrations/0001_init.sql",
     "db:seed:local": "npx wrangler d1 execute jewelry_shop_db --local --file=./scripts/seed.sql",
     "db:seed:remote": "npx wrangler d1 execute jewelry_shop_db --remote --file=./scripts/seed.sql",
-    "create:admin": "node scripts/create-admin.js"
+    "create:admin": "node scripts/create-admin.js",
+    "create:vendor": "node scripts/create-vendor.js"
   },
   "devDependencies": {
     "wrangler": "^3.90.0"

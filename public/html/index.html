@@ -4,21 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Jewelry Shop — Handmade Jewelry</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/home.css" />
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header" data-site-header>
     <div class="container">
-      <a href="/html/index.html" class="brand" data-site-name>Jewelry Shop</a>
-      <nav class="main-nav">
-        <a href="/html/index.html">Home</a>
-        <a href="/html/shop.html">Shop All</a>
+      <a href="/html/index.html" class="brand"><img data-logo alt="" class="brand-logo" /><span data-site-name>Jewelry Shop</span></a>
+      <nav class="main-nav" data-main-nav>
+        <a href="/html/index.html" data-nav-link>Home</a>
+        <a href="/html/shop.html" data-nav-link>Shop All</a>
       </nav>
       <div class="header-actions">
-        <a href="/html/cart.html" class="cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
+        <a href="/html/cart.html" class="cart-link" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></svg>
+          <span class="cart-count" data-cart-count>0</span>
+        </a>
+        <button class="nav-toggle" data-nav-toggle type="button" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
+    <nav class="mobile-nav" data-mobile-nav>
+      <a href="/html/index.html" data-nav-link>Home</a>
+      <a href="/html/shop.html" data-nav-link>Shop All</a>
+      <a href="/html/cart.html" data-nav-link>Cart</a>
+    </nav>
   </header>
 
   <section class="hero">
@@ -42,12 +54,35 @@
   </section>
 
   <footer class="site-footer">
-    <div class="container">
-      <span data-site-name>Jewelry Shop</span>
-      <span>Questions? <a data-support-email href="#">hello@example.com</a></span>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="/html/index.html" class="brand"><img data-logo alt="" class="brand-logo" /><span data-site-name>Jewelry Shop</span></a>
+        <p>Handmade jewelry, hand-finished in small batches &mdash; no two pieces are quite the same.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/html/index.html">Home</a></li>
+          <li><a href="/html/shop.html">Shop All</a></li>
+          <li><a href="/html/cart.html">Cart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li>Questions? <a data-support-email href="#">hello@example.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom-wrap">
+      <div class="container footer-bottom">
+        <span>&copy; <span data-footer-year></span> <span data-site-name>Jewelry Shop</span>. All rights reserved.</span>
+        <span>Developed by SitePragati &middot; <a href="mailto:support@sitepragati.in">support@sitepragati.in</a></span>
+      </div>
     </div>
   </footer>
 
+  <script src="/js/renewal-gate.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/cart-store.js"></script>
   <script src="/js/header.js"></script>

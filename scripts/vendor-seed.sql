@@ -1,0 +1,1 @@
+INSERT INTO admin_users (email, password_hash, name, role) VALUES ('test-vendor@example.com', '6e1f613d-3214-498b-a0ea-2616d9733a47$db88e18ca1344dafbe86d6d8e573d9d4e0e3164e6cda3c64f79f515581fb94e5', 'Test Vendor', 'vendor') ON CONFLICT(email) DO UPDATE SET password_hash = excluded.password_hash, name = excluded.name, role = 'vendor';

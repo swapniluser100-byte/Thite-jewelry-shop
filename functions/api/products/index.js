@@ -1,17 +1,23 @@
 import { all, run } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
-import { requireAdmin } from "../../lib/auth.js";
+import { requireProductAccess } from "../../lib/auth.js";
 
 // GET /api/products            -> public: active products only (storefront)
-//   ?admin=1                   -> requires admin session: all products incl. inactive
-// POST /api/products           -> admin only: create a product
+//   ?admin=1                   -> requires vendor or shop-admin session, and the
+//                                  vendor must not have turned off Admin Console
+//                                  product access from the Vendor Portal
+// POST /api/products           -> same access rule as above: create a product
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const wantsAdmin = url.searchParams.get("admin") === "1";
 
   if (wantsAdmin) {
-    const admin = await requireAdmin(request, env.DB);
-    if (!admin) return error("Not authenticated", 401);
+    const { user: admin, reason } = await requireProductAccess(request, env.DB);
+    if (!admin) {
+      return reason === "disabled"
+        ? error("Product management has been turned off for Admin Console users. Ask the vendor to re-enable it in the Vendor Portal.", 403)
+        : error("Not authenticated", 401);
+    }
     const rows = await all(
       env.DB,
       `SELECT p.*, c.name AS category_name FROM products p
@@ -41,8 +47,12 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  const admin = await requireAdmin(request, env.DB);
-  if (!admin) return error("Not authenticated", 401);
+  const { user: admin, reason } = await requireProductAccess(request, env.DB);
+  if (!admin) {
+    return reason === "disabled"
+      ? error("Product management has been turned off for Admin Console users. Ask the vendor to re-enable it in the Vendor Portal.", 403)
+      : error("Not authenticated", 401);
+  }
 
   const body = await request.json().catch(() => null);
   if (!body || !body.name || body.price_cents == null) {

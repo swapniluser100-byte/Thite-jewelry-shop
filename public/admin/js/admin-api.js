@@ -41,10 +41,14 @@ const adminApi = {
   },
   customers: {
     list: () => request("/customers"),
+    get: (id) => request(`/customers/${id}`),
+    create: (payload) => request("/customers", { method: "POST", body: JSON.stringify(payload) }),
+    update: (id, payload) => request(`/customers/${id}`, { method: "PUT", body: JSON.stringify(payload) }),
   },
+  // Read-only from the Admin Console's side — the vendor's Vendor Portal is
+  // the only place these get written.
   settings: {
     get: () => request("/settings"),
-    update: (payload) => request("/settings", { method: "PUT", body: JSON.stringify(payload) }),
   },
 };
 

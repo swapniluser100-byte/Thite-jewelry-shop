@@ -1,0 +1,83 @@
+/* ============================================================
+   Design tokens — the single source of truth for color, type,
+   radius, shadow and layout across the whole application:
+   storefront, Admin Console, and Vendor Portal.
+
+   Each section's own stylesheet (base.css, admin.css, vendor.css,
+   checkout.css) maps its local variable names onto these, so this
+   file is loaded first on every page and existing component rules
+   keep working unchanged.
+
+   Admin Console and Vendor Portal intentionally keep their own
+   brand accent (shop terracotta vs. vendor blue) as a wayfinding
+   cue for which console you're in — everything else (type scale,
+   radius, shadow, semantic status colors) is shared.
+   ============================================================ */
+:root {
+  /* ---- Brand: the shop's own identity (storefront + Admin Console) ---- */
+  --brand-shop: #a9744f;
+  --brand-shop-dark: #8a5c3c;
+
+  /* ---- Brand: the vendor/agency identity (Vendor Portal only) ---- */
+  --brand-vendor: #2f6690;
+  --brand-vendor-dark: #1c4867;
+
+  /* ---- Neutral scale, warm (storefront + Admin Console) ---- */
+  --ink-900: #2b2320;
+  --ink-700: #6b5d54;
+  --surface: #ffffff;
+  --surface-alt: #f1e9e0;
+  --bg: #faf6f2;
+  --line: #e8ddd3;
+
+  /* ---- Neutral scale, cool (Vendor Portal chrome) ---- */
+  --ink-900-cool: #1c2129;
+  --ink-700-cool: #666f7d;
+  --bg-cool: #f3f4f6;
+  --line-cool: #dde2e8;
+
+  /* ---- Semantic status colors — identical meaning everywhere ---- */
+  --status-success: #4b7a52;
+  --status-success-soft: #dcecdd;
+  --status-warn: #b8862f;
+  --status-warn-soft: #f3e3c8;
+  --status-danger: #b3453f;
+  --status-danger-soft: #f3d9d7;
+  --status-info: #3d5f8a;
+  --status-info-soft: #dbe6f5;
+  --status-teal: #2f6f7d;
+  --status-teal-soft: #dcecf0;
+  --status-purple: #7a4f8a;
+  --status-purple-soft: #eee0f3;
+
+  /* ---- KPI / stat-card accent icons ---- */
+  --accent-orange: #dd7f22;
+  --accent-orange-soft: #fbe4cf;
+  --accent-red: #c1453e;
+  --accent-red-soft: #f6d9d6;
+  --accent-green: #2f7d46;
+  --accent-green-soft: #d9f0e0;
+  --accent-blue: #2f6fd6;
+  --accent-blue-soft: #dbe7fb;
+  --accent-purple: #7a4f8a;
+  --accent-purple-soft: #ecdff3;
+
+  /* ---- Radius scale ---- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* ---- Shadow scale (one neutral tint, used everywhere) ---- */
+  --shadow-sm: 0 4px 16px rgba(30, 24, 20, 0.06);
+  --shadow-md: 0 8px 24px rgba(30, 24, 20, 0.08);
+  --shadow-lg: 0 20px 44px -14px rgba(30, 24, 20, 0.22);
+
+  /* ---- Typography ---- */
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* ---- Layout ---- */
+  --header-h: 76px;
+  --sidebar-w: 220px;
+}

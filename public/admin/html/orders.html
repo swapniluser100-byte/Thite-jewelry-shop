@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Orders — Admin Console</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/admin/css/admin.css" />
 </head>
 <body>
@@ -11,30 +12,46 @@
     <nav class="admin-sidebar">
       <div class="brand">Admin Console</div>
       <a href="/admin/html/dashboard.html">Dashboard</a>
-      <a href="/admin/html/products.html">Products</a>
-      <a href="/admin/html/orders.html" class="active">Orders</a>
       <a href="/admin/html/customers.html">Customers</a>
-      <a href="/admin/html/settings.html">Settings</a>
+      <a href="/admin/html/products.html" data-nav-products>Products</a>
+      <a href="/admin/html/orders.html" class="active">Orders</a>
       <a href="#" data-logout class="logout-link">Log out</a>
+      <a href="https://www.sitepragati.in/raise-request?customerId=asmcDHaHEEktePc" target="_blank" rel="noopener" class="maintenance-link">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Site Maintenance Request
+      </a>
+      <div class="sidebar-credit">Developed by SitePragati<br /><a href="mailto:support@sitepragati.in">support@sitepragati.in</a></div>
     </nav>
     <main class="admin-main">
       <div class="admin-topbar">
-        <h1>Orders</h1>
-        <span class="who">Signed in as <span data-admin-name>…</span></span>
+        <h1>Orders Overview</h1>
+        <div class="topbar-meta">
+          <span class="who">Signed in as <span data-admin-name>…</span></span>
+          <span class="who" id="last-updated"></span>
+        </div>
       </div>
 
-      <div class="filters-bar">
-        <select id="status-filter">
-          <option value="">All statuses</option>
-          <option value="pending_payment">Pending payment</option>
-          <option value="payment_submitted">Payment submitted</option>
-          <option value="paid">Paid</option>
-          <option value="processing">Processing</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="refunded">Refunded</option>
-        </select>
+      <div class="stat-grid" id="stat-grid"></div>
+
+      <div class="toolbar" style="flex-wrap:wrap; row-gap:12px;">
+        <span class="helper-text" id="order-count"></span>
+        <div class="filters-bar" style="margin-bottom:0;">
+          <input type="search" id="order-search" class="search-input" placeholder="Search order #, customer…" />
+          <select id="status-filter">
+            <option value="">All statuses</option>
+            <option value="pending_payment">Pending payment</option>
+            <option value="payment_submitted">Payment submitted</option>
+            <option value="paid">Paid</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
+          <select id="customer-filter">
+            <option value="">All customers</option>
+          </select>
+        </div>
       </div>
 
       <div class="card">
@@ -42,10 +59,12 @@
           <thead><tr><th>Order</th><th>Customer</th><th>Status</th><th>Total</th><th>Placed</th></tr></thead>
           <tbody id="orders-body"><tr><td colspan="5">Loading…</td></tr></tbody>
         </table>
+        <div class="pagination-bar" id="orders-pagination"></div>
       </div>
     </main>
   </div>
 
+  <script src="/js/renewal-gate.js"></script>
   <script src="/admin/js/admin-api.js"></script>
   <script src="/admin/js/admin-auth-guard.js"></script>
   <script src="/admin/js/orders.js"></script>

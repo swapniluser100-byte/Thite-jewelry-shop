@@ -1,9 +1,9 @@
 import { all, run } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
-import { requireAdmin } from "../../lib/auth.js";
+import { requireRole } from "../../lib/auth.js";
 
 // GET /api/settings  -> public (storefront needs the QR code/UPI info + brand info)
-// PUT /api/settings  -> admin only, body: { key: value, ... }
+// PUT /api/settings  -> vendor only, body: { key: value, ... }
 export async function onRequestGet({ env }) {
   const rows = await all(env.DB, "SELECT key, value FROM settings");
   const settings = {};
@@ -12,7 +12,7 @@ export async function onRequestGet({ env }) {
 }
 
 export async function onRequestPut({ request, env }) {
-  const admin = await requireAdmin(request, env.DB);
+  const admin = await requireRole(request, env.DB, ["vendor"]);
   if (!admin) return error("Not authenticated", 401);
 
   const body = await request.json().catch(() => null);

@@ -139,8 +139,10 @@ CREATE TABLE IF NOT EXISTS settings (
 INSERT OR IGNORE INTO settings (key, value) VALUES
   ('site_name', 'Luna & Clay Jewelry'),
   ('brand_color', '#a9744f'),
+  ('logo_url', ''),
   ('support_email', 'hello@example.com'),
   ('from_email', 'orders@example.com'),
   ('payment_qr_image_url', ''),
   ('payment_upi_id', ''),
-  ('payment_instructions', 'Scan the QR code with any UPI app and enter the amount shown. After paying, submit your transaction reference below.');
+  ('payment_instructions', 'Scan the QR code with any UPI app and enter the amount shown. After paying, submit your transaction reference below.'),
+  ('admin_products_tab_enabled', '1');
