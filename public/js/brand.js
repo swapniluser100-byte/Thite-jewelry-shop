@@ -37,6 +37,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.documentElement.style.setProperty("--color-brand", settings.brand_color);
     }
     if (settings.site_name) document.title = document.title.replace("Jewelry Shop", settings.site_name);
+
+    // Contact details are all optional — each footer line only appears once
+    // the vendor has actually filled it in from the Vendor Portal.
+    const phone = (settings.business_phone || "").trim();
+    if (phone) {
+      const digits = phone.replace(/[^\d]/g, "");
+      document.querySelectorAll("[data-phone-row]").forEach((li) => (li.hidden = false));
+      document.querySelectorAll("[data-phone-link]").forEach((a) => {
+        a.textContent = phone;
+        a.href = `tel:${phone.replace(/[^\d+]/g, "")}`;
+      });
+      if (digits) {
+        document.querySelectorAll("[data-whatsapp-row]").forEach((li) => (li.hidden = false));
+        document.querySelectorAll("[data-whatsapp-link]").forEach((a) => (a.href = `https://wa.me/${digits}`));
+      }
+    }
+
+    const address = (settings.business_address || "").trim();
+    if (address) {
+      document.querySelectorAll("[data-address-row]").forEach((li) => (li.hidden = false));
+      document.querySelectorAll("[data-business-address]").forEach((el) => (el.textContent = address));
+    }
+
+    const instagram = (settings.instagram_url || "").trim();
+    if (instagram) {
+      document.querySelectorAll("[data-instagram-row]").forEach((li) => (li.hidden = false));
+      document.querySelectorAll("[data-instagram-link]").forEach((a) => (a.href = instagram));
+    }
   } catch {
     /* settings unavailable (e.g. DB not migrated yet) — page still renders with defaults */
   }

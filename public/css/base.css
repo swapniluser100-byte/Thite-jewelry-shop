@@ -347,6 +347,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
 .footer-col li { font-size: 0.9rem; }
+.footer-col [data-business-address] { white-space: pre-line; }
 
 .footer-bottom-wrap { border-top: 1px solid rgba(255, 255, 255, 0.12); }
 .footer-bottom {

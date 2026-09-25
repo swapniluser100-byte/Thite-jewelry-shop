@@ -145,4 +145,7 @@ INSERT OR IGNORE INTO settings (key, value) VALUES
   ('payment_qr_image_url', ''),
   ('payment_upi_id', ''),
   ('payment_instructions', 'Scan the QR code with any UPI app and enter the amount shown. After paying, submit your transaction reference below.'),
-  ('admin_products_tab_enabled', '1');
+  ('admin_products_tab_enabled', '1'),
+  ('business_phone', ''),
+  ('business_address', ''),
+  ('instagram_url', '');
