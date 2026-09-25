@@ -27,9 +27,14 @@
         <span class="helper-text" id="product-count"></span>
         <div style="display:flex; gap:10px; align-items:center;">
           <input type="search" id="product-search" class="search-input" placeholder="Search products…" />
+          <button class="btn btn-outline" id="export-products-btn" type="button">Export CSV</button>
+          <button class="btn btn-outline" id="import-products-btn" type="button">Import CSV</button>
+          <input type="file" id="import-products-file" accept=".csv,text/csv" hidden />
           <a href="/vendor/html/product-edit.html" class="btn btn-primary">+ New product</a>
         </div>
       </div>
+
+      <div id="import-summary" class="card" style="display:none;"></div>
 
       <div class="card">
         <table>

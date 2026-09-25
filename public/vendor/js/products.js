@@ -197,6 +197,212 @@ async function loadProducts() {
   }
 }
 
+// ---------- Export ----------
+
+const CSV_COLUMNS = ["name", "slug", "category", "price", "currency", "stock_qty", "is_active", "image_url", "description"];
+
+function csvField(value) {
+  const s = value == null ? "" : String(value);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function productsToCsv(products) {
+  const header = CSV_COLUMNS.join(",");
+  const rows = products.map((p) =>
+    [
+      p.name,
+      p.slug,
+      p.category_name || "",
+      (p.price_cents / 100).toFixed(2),
+      p.currency || "INR",
+      p.stock_qty,
+      p.is_active ? "Yes" : "No",
+      p.image_url || "",
+      p.description || "",
+    ]
+      .map(csvField)
+      .join(",")
+  );
+  return [header, ...rows].join("\r\n");
+}
+
+function downloadCsv(filename, csvText) {
+  // Prefix a BOM so Excel opens the file as UTF-8 instead of guessing wrong
+  // on non-ASCII product names/descriptions.
+  const blob = new Blob(["﻿" + csvText], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportProducts() {
+  const csv = productsToCsv(allProducts);
+  const date = new Date().toISOString().slice(0, 10);
+  downloadCsv(`products-${date}.csv`, csv);
+}
+
+// ---------- Import ----------
+
+// Small hand-rolled CSV parser (quoted fields, embedded commas/newlines,
+// doubled-quote escaping) — no library needed for a format this contained.
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  const s = text.replace(/^﻿/, ""); // strip a BOM if this file was itself exported from here (or Excel)
+
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (s[i + 1] === '"') {
+          field += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        field += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      row.push(field);
+      field = "";
+    } else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && s[i + 1] === "\n") i++;
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += ch;
+    }
+  }
+  if (field.length || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows.filter((r) => r.some((cell) => cell.trim() !== ""));
+}
+
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function parseBoolean(value) {
+  const v = (value || "").trim().toLowerCase();
+  return !["no", "false", "0", "hidden", "inactive", ""].includes(v);
+}
+
+async function importProductsFromCsv(file) {
+  const summaryEl = document.getElementById("import-summary");
+  const text = await file.text();
+  const rows = parseCsv(text);
+  if (rows.length < 2) {
+    summaryEl.style.display = "block";
+    summaryEl.innerHTML = `<p class="error-text">That file doesn't have any data rows to import.</p>`;
+    return;
+  }
+
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const colIndex = {};
+  CSV_COLUMNS.forEach((col) => {
+    const idx = header.indexOf(col);
+    if (idx !== -1) colIndex[col] = idx;
+  });
+  if (colIndex.name === undefined || colIndex.price === undefined) {
+    summaryEl.style.display = "block";
+    summaryEl.innerHTML = `<p class="error-text">The file needs at least "name" and "price" columns. Use Export CSV once to see the expected format.</p>`;
+    return;
+  }
+
+  const dataRows = rows.slice(1);
+  if (!confirm(`Import ${dataRows.length} row${dataRows.length === 1 ? "" : "s"} from this file? Existing products with a matching slug will be updated; everything else is created new.`)) {
+    return;
+  }
+
+  const cell = (row, col) => (colIndex[col] !== undefined ? (row[colIndex[col]] || "").trim() : "");
+
+  const existingBySlug = new Map(allProducts.map((p) => [p.slug, p]));
+  const { categories: existingCategories } = await window.vendorApi.categories.list();
+  const categoryByName = new Map(existingCategories.map((c) => [c.name.toLowerCase(), c.id]));
+
+  let created = 0, updated = 0;
+  const errors = [];
+
+  for (let i = 0; i < dataRows.length; i++) {
+    const row = dataRows[i];
+    const rowNum = i + 2; // +1 for header, +1 for 1-indexing
+    const name = cell(row, "name");
+    const priceStr = cell(row, "price");
+
+    if (!name) { errors.push(`Row ${rowNum}: missing name — skipped.`); continue; }
+    const price = Number(priceStr);
+    if (!priceStr || Number.isNaN(price)) { errors.push(`Row ${rowNum} ("${name}"): missing or invalid price — skipped.`); continue; }
+
+    let categoryId = null;
+    const categoryName = cell(row, "category");
+    if (categoryName) {
+      const key = categoryName.toLowerCase();
+      if (categoryByName.has(key)) {
+        categoryId = categoryByName.get(key);
+      } else {
+        try {
+          const { id } = await window.vendorApi.categories.create({ name: categoryName });
+          categoryByName.set(key, id);
+          categoryId = id;
+        } catch (e) {
+          errors.push(`Row ${rowNum} ("${name}"): couldn't create category "${categoryName}" (${e.message}) — imported without a category.`);
+        }
+      }
+    }
+
+    const slug = cell(row, "slug") || slugify(name);
+    const payload = {
+      name,
+      slug,
+      description: cell(row, "description"),
+      price_cents: Math.round(price * 100),
+      currency: cell(row, "currency") || "INR",
+      category_id: categoryId,
+      image_url: cell(row, "image_url"),
+      stock_qty: Number(cell(row, "stock_qty")) || 0,
+      is_active: parseBoolean(cell(row, "is_active")) ? 1 : 0,
+    };
+
+    try {
+      const existing = existingBySlug.get(slug);
+      if (existing) {
+        await window.vendorApi.products.update(existing.id, payload);
+        updated++;
+      } else {
+        await window.vendorApi.products.create(payload);
+        created++;
+      }
+    } catch (e) {
+      errors.push(`Row ${rowNum} ("${name}"): ${e.message}`);
+    }
+  }
+
+  summaryEl.style.display = "block";
+  summaryEl.innerHTML = `
+    <p><strong>${created}</strong> created, <strong>${updated}</strong> updated${errors.length ? `, <strong>${errors.length}</strong> row${errors.length === 1 ? "" : "s"} skipped` : ""}.</p>
+    ${errors.length ? `<ul class="error-text" style="margin:8px 0 0; padding-left:20px;">${errors.map((e) => `<li>${e}</li>`).join("")}</ul>` : ""}
+  `;
+  loadProducts();
+}
+
 document.addEventListener("click", closeAllMenus);
 document.addEventListener("vendor:ready", () => {
   loadProducts();
@@ -204,5 +410,28 @@ document.addEventListener("vendor:ready", () => {
     searchQuery = e.target.value.trim();
     currentPage = 1;
     renderTable();
+  });
+
+  document.getElementById("export-products-btn").addEventListener("click", exportProducts);
+
+  const fileInput = document.getElementById("import-products-file");
+  document.getElementById("import-products-btn").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files[0];
+    fileInput.value = ""; // allow re-selecting the same file next time
+    if (!file) return;
+    const btn = document.getElementById("import-products-btn");
+    btn.disabled = true;
+    btn.textContent = "Importing…";
+    try {
+      await importProductsFromCsv(file);
+    } catch (e) {
+      const summaryEl = document.getElementById("import-summary");
+      summaryEl.style.display = "block";
+      summaryEl.innerHTML = `<p class="error-text">Import failed: ${e.message}</p>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Import CSV";
+    }
   });
 });
