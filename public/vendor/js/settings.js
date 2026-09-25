@@ -9,6 +9,16 @@ const FIELDS = [
   "payment_instructions",
 ];
 
+// Vendors naturally paste the link Google Drive's "Share" button gives them
+// (a /file/d/<id>/view page, or an /open?id=<id> link) — neither of those
+// URLs serves image bytes, so an <img src> pointed at one renders nothing.
+// Rewrite either shape to the /d/<id> form Drive actually serves images
+// from, and leave any other host's URL untouched.
+function toDirectImageUrl(url) {
+  const m = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([\w-]+)/);
+  return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : url;
+}
+
 function setProductsTabToggle(enabled) {
   const btn = document.getElementById("admin-products-tab-toggle");
   btn.classList.toggle("is-active", enabled);
@@ -20,11 +30,22 @@ function updateLogoPreview() {
   const url = document.getElementById("logo_url").value.trim();
   const img = document.getElementById("logo-preview-img");
   const placeholder = document.querySelector("#logo-preview svg");
+  const errorEl = document.getElementById("logo-preview-error");
   if (url) {
-    img.src = url;
-    img.hidden = false;
-    placeholder.style.display = "none";
+    errorEl.style.display = "none";
+    img.onload = () => {
+      img.hidden = false;
+      placeholder.style.display = "none";
+    };
+    img.onerror = () => {
+      img.hidden = true;
+      placeholder.style.display = "block";
+      errorEl.textContent = "Couldn't load an image from that URL — check the link is a direct image (not a share/view page) and is publicly viewable.";
+      errorEl.style.display = "block";
+    };
+    img.src = toDirectImageUrl(url);
   } else {
+    errorEl.style.display = "none";
     img.hidden = true;
     img.removeAttribute("src");
     placeholder.style.display = "block";
@@ -51,6 +72,9 @@ async function saveSettings() {
   const successEl = document.getElementById("settings-success");
   errorEl.style.display = "none";
   successEl.style.display = "none";
+
+  const logoInput = document.getElementById("logo_url");
+  logoInput.value = toDirectImageUrl(logoInput.value.trim());
 
   const payload = {};
   FIELDS.forEach((key) => {

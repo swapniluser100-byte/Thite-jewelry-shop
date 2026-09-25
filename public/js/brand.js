@@ -1,6 +1,18 @@
 // Pulls site_name / support_email / brand_color / logo_url from the
 // vendor-editable settings table so every page reflects what's configured
 // in the Vendor Portal without needing a rebuild.
+
+// Vendors naturally paste the link Google Drive's "Share" button gives them
+// (a /file/d/<id>/view page, or an /open?id=<id> link) — neither of those
+// URLs serves image bytes, so an <img src> pointed at one renders nothing.
+// Rewrite either shape to the /d/<id> form Drive actually serves images
+// from, and leave any other host's URL untouched.
+function toDirectImageUrl(url) {
+  const m = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([\w-]+)/);
+  return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : url;
+}
+window.toDirectImageUrl = toDirectImageUrl;
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const { settings } = await window.api.settings.get();
@@ -11,10 +23,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     if (settings.logo_url) {
       document.querySelectorAll("[data-logo]").forEach((img) => {
-        img.src = settings.logo_url;
+        const nameEls = img.closest(".brand")?.querySelectorAll("[data-site-name]");
         img.alt = settings.site_name || "Logo";
-        img.style.display = "block";
-        img.closest(".brand")?.querySelectorAll("[data-site-name]").forEach((nameEl) => (nameEl.style.display = "none"));
+        // Only swap to the logo once it's actually loaded — a bad URL (typo,
+        // deleted file, an un-embeddable host) then leaves the text name
+        // showing instead of an invisible broken-image box.
+        img.onload = () => {
+          img.style.display = "block";
+          nameEls?.forEach((nameEl) => (nameEl.style.display = "none"));
+        };
+        img.onerror = () => {
+          img.style.display = "none";
+          nameEls?.forEach((nameEl) => (nameEl.style.display = ""));
+        };
+        img.src = toDirectImageUrl(settings.logo_url);
       });
     }
     if (settings.brand_color) {
