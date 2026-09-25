@@ -22,13 +22,30 @@
       </div>
 
       <div class="settings-tabs" role="tablist">
-        <button type="button" class="settings-tab is-active" data-tab="branding" role="tab" aria-selected="true">Branding</button>
+        <button type="button" class="settings-tab is-active" data-tab="business" role="tab" aria-selected="true">Business Details</button>
+        <button type="button" class="settings-tab" data-tab="branding" role="tab" aria-selected="false">Branding</button>
         <button type="button" class="settings-tab" data-tab="contact" role="tab" aria-selected="false">Contact Details</button>
         <button type="button" class="settings-tab" data-tab="payment" role="tab" aria-selected="false">Payment</button>
         <button type="button" class="settings-tab" data-tab="access" role="tab" aria-selected="false">Admin Access</button>
       </div>
 
-      <div class="settings-panel is-active" data-panel="branding">
+      <div class="settings-panel is-active" data-panel="business">
+        <div class="card" style="max-width:640px;">
+          <h3 style="margin-top:0;">Business Details</h3>
+          <div class="field">
+            <label for="business_name">Business name</label>
+            <input id="business_name" placeholder="Thite Jewelers" />
+            <p class="helper-text">Your registered business name — separate from the "Site name" under Branding, which is the storefront's public-facing name.</p>
+          </div>
+          <div class="field">
+            <label for="customer_id">SitePragati Customer ID</label>
+            <input id="customer_id" placeholder="asmcDHaHEEktePc" />
+            <p class="helper-text">Identifies your account with SitePragati for renewal checks and maintenance requests. Only change this if SitePragati support asks you to.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-panel" data-panel="branding">
         <div class="card" style="max-width:640px;">
           <h3 style="margin-top:0;">Branding</h3>
           <div class="field">

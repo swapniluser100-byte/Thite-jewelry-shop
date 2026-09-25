@@ -23,6 +23,15 @@
         location.href = "/admin/html/dashboard.html";
       }
     }
+
+    // The "Customer ID" is vendor-configurable (Settings → Business Details);
+    // the href already carries the original hardcoded id as a fallback, so
+    // this only overwrites it once a value actually loads.
+    if (settings.customer_id) {
+      document.querySelectorAll("[data-maintenance-link]").forEach((a) => {
+        a.href = `https://www.sitepragati.in/raise-request?customerId=${encodeURIComponent(settings.customer_id)}`;
+      });
+    }
   } catch {
     /* settings unreachable — fail open, nav stays as-is */
   }

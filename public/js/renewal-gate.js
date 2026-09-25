@@ -4,7 +4,10 @@
 // untouched. See https://github.com/sitepragati-arch/Reusable-Components
 (() => {
   const API_BASE = "https://cf-relay-svc.swapniluser100.workers.dev";
-  const CUSTOMER_ID = "asmcDHaHEEktePc";
+  // Vendor-configurable (Vendor Portal → Settings → Business Details →
+  // "SitePragati Customer ID"); this is only the fallback used until that
+  // setting loads (or if it's ever unreachable), so the gate still runs.
+  let CUSTOMER_ID = "asmcDHaHEEktePc";
   const APP_NAME = "Thite Jewelry Shop";
   const SUPPORT_EMAIL = "sitepragati@gmail.com";
 
@@ -82,6 +85,9 @@
 
   async function run() {
     try {
+      const settingsRes = await fetch("/api/settings").then((r) => r.json()).catch(() => null);
+      if (settingsRes?.settings?.customer_id) CUSTOMER_ID = settingsRes.settings.customer_id;
+
       const status = await checkStatus();
       if (status && status.active === false) renderLock(status);
     } catch {

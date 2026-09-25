@@ -148,4 +148,6 @@ INSERT OR IGNORE INTO settings (key, value) VALUES
   ('admin_products_tab_enabled', '1'),
   ('business_phone', ''),
   ('business_address', ''),
-  ('instagram_url', '');
+  ('instagram_url', ''),
+  ('business_name', ''),
+  ('customer_id', 'asmcDHaHEEktePc');

@@ -1,4 +1,6 @@
 const FIELDS = [
+  "business_name",
+  "customer_id",
   "site_name",
   "logo_url",
   "brand_color",
