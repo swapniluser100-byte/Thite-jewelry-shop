@@ -23,19 +23,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     if (settings.logo_url) {
       document.querySelectorAll("[data-logo]").forEach((img) => {
-        const nameEls = img.closest(".brand")?.querySelectorAll("[data-site-name]");
         img.alt = settings.site_name || "Logo";
-        // Only swap to the logo once it's actually loaded — a bad URL (typo,
-        // deleted file, an un-embeddable host) then leaves the text name
-        // showing instead of an invisible broken-image box.
-        img.onload = () => {
-          img.style.display = "block";
-          nameEls?.forEach((nameEl) => (nameEl.style.display = "none"));
-        };
-        img.onerror = () => {
-          img.style.display = "none";
-          nameEls?.forEach((nameEl) => (nameEl.style.display = ""));
-        };
+        // The logo sits next to the site name, not instead of it — only
+        // reveal the image once it's actually loaded, so a bad URL (typo,
+        // deleted file, an un-embeddable host) just leaves the text name
+        // showing alone instead of an invisible broken-image box next to it.
+        img.onload = () => (img.style.display = "block");
+        img.onerror = () => (img.style.display = "none");
         img.src = toDirectImageUrl(settings.logo_url);
       });
     }
