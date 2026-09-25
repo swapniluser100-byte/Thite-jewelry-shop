@@ -21,83 +21,98 @@
         <span class="who">Signed in as <span data-admin-name>…</span></span>
       </div>
 
-      <div class="card" style="max-width:640px;">
-        <h3 style="margin-top:0;">Branding</h3>
-        <div class="field">
-          <label for="site_name">Site name (used on the storefront and in emails)</label>
-          <input id="site_name" />
-        </div>
-        <div class="field">
-          <label for="logo_url">Logo image URL</label>
-          <div class="logo-field">
-            <div class="logo-preview" id="logo-preview">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-              <img id="logo-preview-img" alt="Logo preview" hidden />
-            </div>
-            <input id="logo_url" placeholder="https://…/logo.png" />
+      <div class="settings-tabs" role="tablist">
+        <button type="button" class="settings-tab is-active" data-tab="branding" role="tab" aria-selected="true">Branding</button>
+        <button type="button" class="settings-tab" data-tab="contact" role="tab" aria-selected="false">Contact Details</button>
+        <button type="button" class="settings-tab" data-tab="payment" role="tab" aria-selected="false">Payment</button>
+        <button type="button" class="settings-tab" data-tab="access" role="tab" aria-selected="false">Admin Access</button>
+      </div>
+
+      <div class="settings-panel is-active" data-panel="branding">
+        <div class="card" style="max-width:640px;">
+          <h3 style="margin-top:0;">Branding</h3>
+          <div class="field">
+            <label for="site_name">Site name (used on the storefront and in emails)</label>
+            <input id="site_name" />
           </div>
-          <p class="helper-text">Shown in place of the site name in the storefront header. Upload it anywhere you like (e.g. an image host, or a Google Drive "Share" link) and paste the URL here. Recommended: a transparent PNG or SVG, roughly 240&times;80px.</p>
-          <p class="error-text" id="logo-preview-error" style="display:none;"></p>
-        </div>
-        <div class="field">
-          <label for="brand_color">Brand color (hex)</label>
-          <input id="brand_color" />
-        </div>
-        <div class="field">
-          <label for="support_email">Support email shown to customers</label>
-          <input id="support_email" type="email" />
-        </div>
-        <div class="field">
-          <label for="from_email">"From" address for order emails (must be verified with your email provider)</label>
-          <input id="from_email" type="email" />
-        </div>
-      </div>
-
-      <div class="card" style="max-width:640px;">
-        <h3 style="margin-top:0;">Contact Details</h3>
-        <p class="helper-text">Shown to customers in the storefront footer — leave any of these blank to hide that line.</p>
-        <div class="field">
-          <label for="business_phone">Phone / WhatsApp number</label>
-          <input id="business_phone" type="tel" placeholder="+91 98765 43210" />
-          <p class="helper-text">Shown as both a "Call us" and a "Chat on WhatsApp" link — one number covers both.</p>
-        </div>
-        <div class="field">
-          <label for="business_address">Business address</label>
-          <textarea id="business_address" rows="2" placeholder="Shop No. 4, MG Road, Pune, Maharashtra 411001"></textarea>
-        </div>
-        <div class="field">
-          <label for="instagram_url">Instagram profile URL</label>
-          <input id="instagram_url" placeholder="https://instagram.com/yourshop" />
+          <div class="field">
+            <label for="logo_url">Logo image URL</label>
+            <div class="logo-field">
+              <div class="logo-preview" id="logo-preview">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+                <img id="logo-preview-img" alt="Logo preview" hidden />
+              </div>
+              <input id="logo_url" placeholder="https://…/logo.png" />
+            </div>
+            <p class="helper-text">Shown in place of the site name in the storefront header. Upload it anywhere you like (e.g. an image host, or a Google Drive "Share" link) and paste the URL here. Recommended: a transparent PNG or SVG, roughly 240&times;80px.</p>
+            <p class="error-text" id="logo-preview-error" style="display:none;"></p>
+          </div>
+          <div class="field">
+            <label for="brand_color">Brand color (hex)</label>
+            <input id="brand_color" />
+          </div>
+          <div class="field">
+            <label for="support_email">Support email shown to customers</label>
+            <input id="support_email" type="email" />
+          </div>
+          <div class="field">
+            <label for="from_email">"From" address for order emails (must be verified with your email provider)</label>
+            <input id="from_email" type="email" />
+          </div>
         </div>
       </div>
 
-      <div class="card" style="max-width:640px;">
-        <h3 style="margin-top:0;">Payment (QR code)</h3>
-        <p class="helper-text">Customers scan this at checkout instead of a card payment form.</p>
-        <div class="field">
-          <label for="payment_qr_image_url">QR code image URL</label>
-          <input id="payment_qr_image_url" placeholder="https://…/upi-qr.png" />
-        </div>
-        <div class="field">
-          <label for="payment_upi_id">UPI ID / payment handle shown under the QR code</label>
-          <input id="payment_upi_id" placeholder="yourshop@upi" />
-        </div>
-        <div class="field">
-          <label for="payment_instructions">Instructions shown to the customer</label>
-          <textarea id="payment_instructions" rows="3"></textarea>
+      <div class="settings-panel" data-panel="contact">
+        <div class="card" style="max-width:640px;">
+          <h3 style="margin-top:0;">Contact Details</h3>
+          <p class="helper-text">Shown to customers in the storefront footer — leave any of these blank to hide that line.</p>
+          <div class="field">
+            <label for="business_phone">Phone / WhatsApp number</label>
+            <input id="business_phone" type="tel" placeholder="+91 98765 43210" />
+            <p class="helper-text">Shown as both a "Call us" and a "Chat on WhatsApp" link — one number covers both.</p>
+          </div>
+          <div class="field">
+            <label for="business_address">Business address</label>
+            <textarea id="business_address" rows="2" placeholder="Shop No. 4, MG Road, Pune, Maharashtra 411001"></textarea>
+          </div>
+          <div class="field">
+            <label for="instagram_url">Instagram profile URL</label>
+            <input id="instagram_url" placeholder="https://instagram.com/yourshop" />
+          </div>
         </div>
       </div>
 
-      <div class="card" style="max-width:640px;">
-        <h3 style="margin-top:0;">Admin Console Access</h3>
-        <p class="helper-text">Control what your Admin Console staff logins can see and manage. Product configuration always stays available here in the Vendor Portal.</p>
-        <div class="field">
-          <label>Products tab</label>
-          <button type="button" class="status-toggle" id="admin-products-tab-toggle">
-            <span class="track"></span>
-            <span class="status-label">Visible</span>
-          </button>
-          <p class="helper-text">When off, Admin Console users won&rsquo;t see the Products tab or be able to add, edit or delete products.</p>
+      <div class="settings-panel" data-panel="payment">
+        <div class="card" style="max-width:640px;">
+          <h3 style="margin-top:0;">Payment (QR code)</h3>
+          <p class="helper-text">Customers scan this at checkout instead of a card payment form.</p>
+          <div class="field">
+            <label for="payment_qr_image_url">QR code image URL</label>
+            <input id="payment_qr_image_url" placeholder="https://…/upi-qr.png" />
+          </div>
+          <div class="field">
+            <label for="payment_upi_id">UPI ID / payment handle shown under the QR code</label>
+            <input id="payment_upi_id" placeholder="yourshop@upi" />
+          </div>
+          <div class="field">
+            <label for="payment_instructions">Instructions shown to the customer</label>
+            <textarea id="payment_instructions" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-panel" data-panel="access">
+        <div class="card" style="max-width:640px;">
+          <h3 style="margin-top:0;">Admin Console Access</h3>
+          <p class="helper-text">Control what your Admin Console staff logins can see and manage. Product configuration always stays available here in the Vendor Portal.</p>
+          <div class="field">
+            <label>Products tab</label>
+            <button type="button" class="status-toggle" id="admin-products-tab-toggle">
+              <span class="track"></span>
+              <span class="status-label">Visible</span>
+            </button>
+            <p class="helper-text">When off, Admin Console users won&rsquo;t see the Products tab or be able to add, edit or delete products.</p>
+          </div>
         </div>
       </div>
 

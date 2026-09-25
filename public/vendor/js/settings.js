@@ -22,6 +22,21 @@ function toDirectImageUrl(url) {
   return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : url;
 }
 
+// Sub-tabs so the Settings page doesn't turn into one long scroll of cards.
+// The selected tab is kept in the URL hash, so a reload (or a link to
+// e.g. #payment) lands back on the same section.
+function activateSettingsTab(name) {
+  const tabs = document.querySelectorAll(".settings-tab");
+  const panels = document.querySelectorAll(".settings-panel");
+  const target = [...tabs].find((t) => t.dataset.tab === name) ? name : tabs[0]?.dataset.tab;
+  tabs.forEach((tab) => {
+    const active = tab.dataset.tab === target;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  panels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.panel === target));
+}
+
 function setProductsTabToggle(enabled) {
   const btn = document.getElementById("admin-products-tab-toggle");
   btn.classList.toggle("is-active", enabled);
@@ -102,4 +117,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("admin-products-tab-toggle").addEventListener("click", (e) => {
     setProductsTabToggle(e.currentTarget.dataset.value !== "1");
   });
+
+  document.querySelectorAll(".settings-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      activateSettingsTab(tab.dataset.tab);
+      history.replaceState(null, "", `#${tab.dataset.tab}`);
+    });
+  });
+  activateSettingsTab(location.hash.slice(1));
 });
