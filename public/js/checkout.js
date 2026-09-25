@@ -130,7 +130,19 @@ async function showPaymentStep(order, items) {
     const { settings } = await window.api.settings.get();
     document.getElementById("payment-instructions").textContent =
       settings.payment_instructions || "Scan the QR code to pay, then enter your transaction reference below.";
-    document.getElementById("qr-image").src = settings.payment_qr_image_url || "/images/qr-placeholder.svg";
+
+    const qrImg = document.getElementById("qr-image");
+    const placeholder = "/images/qr-placeholder.svg";
+    if (settings.payment_qr_image_url) {
+      // Same Google-Drive-share-link gotcha as the logo: a "Share" link is a
+      // web page, not image bytes, so it fails to load as an <img src> — fall
+      // back to the placeholder instead of leaving a broken image at checkout.
+      qrImg.onerror = () => (qrImg.src = placeholder);
+      qrImg.src = window.toDirectImageUrl ? window.toDirectImageUrl(settings.payment_qr_image_url) : settings.payment_qr_image_url;
+    } else {
+      qrImg.src = placeholder;
+    }
+
     const upiIdEl = document.getElementById("upi-id");
     upiIdEl.innerHTML = settings.payment_upi_id
       ? `<span class="upi-pill__badge">UPI</span><span class="upi-pill__value">${settings.payment_upi_id}</span>`

@@ -46,11 +46,14 @@ function setProductsTabToggle(enabled) {
   btn.dataset.value = enabled ? "1" : "0";
 }
 
-function updateLogoPreview() {
-  const url = document.getElementById("logo_url").value.trim();
-  const img = document.getElementById("logo-preview-img");
-  const placeholder = document.querySelector("#logo-preview svg");
-  const errorEl = document.getElementById("logo-preview-error");
+// Shared by the logo field and the QR code field: both are "paste a URL,
+// see it load (or don't)" inputs with the same Google-Drive-share-link
+// gotcha, so this one function drives both previews.
+function updateImagePreview({ inputId, imgId, previewBoxId, errorId }) {
+  const url = document.getElementById(inputId).value.trim();
+  const img = document.getElementById(imgId);
+  const placeholder = document.querySelector(`#${previewBoxId} svg`);
+  const errorEl = document.getElementById(errorId);
   if (url) {
     errorEl.style.display = "none";
     img.onload = () => {
@@ -72,6 +75,14 @@ function updateLogoPreview() {
   }
 }
 
+function updateLogoPreview() {
+  updateImagePreview({ inputId: "logo_url", imgId: "logo-preview-img", previewBoxId: "logo-preview", errorId: "logo-preview-error" });
+}
+
+function updateQrPreview() {
+  updateImagePreview({ inputId: "payment_qr_image_url", imgId: "qr-preview-img", previewBoxId: "qr-preview", errorId: "qr-preview-error" });
+}
+
 async function loadSettings() {
   try {
     const { settings } = await window.vendorApi.settings.get();
@@ -80,6 +91,7 @@ async function loadSettings() {
       if (el) el.value = settings[key] || "";
     });
     updateLogoPreview();
+    updateQrPreview();
     setProductsTabToggle(settings.admin_products_tab_enabled !== "0");
   } catch (e) {
     document.getElementById("settings-error").textContent = e.message;
@@ -95,6 +107,8 @@ async function saveSettings() {
 
   const logoInput = document.getElementById("logo_url");
   logoInput.value = toDirectImageUrl(logoInput.value.trim());
+  const qrInput = document.getElementById("payment_qr_image_url");
+  qrInput.value = toDirectImageUrl(qrInput.value.trim());
 
   const payload = {};
   FIELDS.forEach((key) => {
@@ -116,6 +130,7 @@ document.addEventListener("vendor:ready", loadSettings);
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("save-settings").addEventListener("click", saveSettings);
   document.getElementById("logo_url").addEventListener("input", updateLogoPreview);
+  document.getElementById("payment_qr_image_url").addEventListener("input", updateQrPreview);
   document.getElementById("admin-products-tab-toggle").addEventListener("click", (e) => {
     setProductsTabToggle(e.currentTarget.dataset.value !== "1");
   });

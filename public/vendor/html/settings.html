@@ -105,7 +105,14 @@
           <p class="helper-text">Customers scan this at checkout instead of a card payment form.</p>
           <div class="field">
             <label for="payment_qr_image_url">QR code image URL</label>
-            <input id="payment_qr_image_url" placeholder="https://…/upi-qr.png" />
+            <div class="logo-field">
+              <div class="logo-preview" id="qr-preview">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+                <img id="qr-preview-img" alt="QR code preview" hidden />
+              </div>
+              <input id="payment_qr_image_url" placeholder="https://…/upi-qr.png" />
+            </div>
+            <p class="error-text" id="qr-preview-error" style="display:none;"></p>
           </div>
           <div class="field">
             <label for="payment_upi_id">UPI ID / payment handle shown under the QR code</label>
