@@ -22,6 +22,7 @@ async function loadProduct() {
   document.getElementById("delete-btn").style.display = "inline-flex";
   const { product } = await window.vendorApi.products.get(productId);
   document.getElementById("name").value = product.name;
+  document.getElementById("product_code").value = product.product_code || "";
   document.getElementById("description").value = product.description || "";
   document.getElementById("price").value = (product.price_cents / 100).toFixed(2);
   document.getElementById("stock_qty").value = product.stock_qty;
@@ -48,6 +49,7 @@ async function handleSubmit(e) {
     const categoryId = await ensureCategory();
     const payload = {
       name: document.getElementById("name").value,
+      product_code: document.getElementById("product_code").value.trim() || null,
       description: document.getElementById("description").value,
       price_cents: Math.round(parseFloat(document.getElementById("price").value) * 100),
       stock_qty: parseInt(document.getElementById("stock_qty").value, 10),

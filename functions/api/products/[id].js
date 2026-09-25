@@ -1,4 +1,4 @@
-import { first, run } from "../../lib/db.js";
+import { first, run, isUniqueConstraintError } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
 import { requireProductAccess } from "../../lib/auth.js";
 
@@ -31,24 +31,35 @@ export async function onRequestPut({ request, params, env }) {
   const body = await request.json().catch(() => null);
   if (!body) return error("Invalid body");
 
-  const existing = await first(env.DB, "SELECT id FROM products WHERE id = ?", params.id);
+  const existing = await first(env.DB, "SELECT id, product_code FROM products WHERE id = ?", params.id);
   if (!existing) return error("Product not found", 404);
 
-  await run(
-    env.DB,
-    `UPDATE products SET name=?, description=?, price_cents=?, currency=?, category_id=?,
-       image_url=?, stock_qty=?, is_active=?, updated_at=datetime('now') WHERE id=?`,
-    body.name,
-    body.description || "",
-    body.price_cents,
-    body.currency || "INR",
-    body.category_id || null,
-    body.image_url || "",
-    body.stock_qty ?? 0,
-    body.is_active ?? 1,
-    params.id
-  );
-  return ok();
+  // Falls back to the current code rather than clearing it if the field
+  // somehow arrives blank -- a product having no Product ID at all isn't a
+  // valid state once one's been assigned.
+  const productCode = (body.product_code || "").trim() || existing.product_code;
+
+  try {
+    await run(
+      env.DB,
+      `UPDATE products SET name=?, description=?, price_cents=?, currency=?, category_id=?,
+         image_url=?, stock_qty=?, is_active=?, product_code=?, updated_at=datetime('now') WHERE id=?`,
+      body.name,
+      body.description || "",
+      body.price_cents,
+      body.currency || "INR",
+      body.category_id || null,
+      body.image_url || "",
+      body.stock_qty ?? 0,
+      body.is_active ?? 1,
+      productCode,
+      params.id
+    );
+    return ok();
+  } catch (e) {
+    if (isUniqueConstraintError(e)) return error("That Product ID is already in use by another product.", 409);
+    throw e;
+  }
 }
 
 export async function onRequestDelete({ request, params, env }) {

@@ -55,6 +55,7 @@ function productRowHtml(p) {
   const low = p.stock_qty <= LOW_STOCK_THRESHOLD;
   return `
     <tr>
+      <td><span class="helper-text" style="font-family:monospace;">${p.product_code || "—"}</span></td>
       <td><a class="row-link" href="/vendor/html/product-edit.html?id=${p.id}">${p.name}</a></td>
       <td>${p.category_name ? `<span class="category-pill" style="background:${categoryColor(p.category_name)}">${p.category_name}</span>` : "—"}</td>
       <td>${window.formatMoney(p.price_cents, p.currency)}</td>
@@ -105,7 +106,12 @@ function closeAllMenus() {
 function filteredProducts() {
   if (!searchQuery) return allProducts;
   const q = searchQuery.toLowerCase();
-  return allProducts.filter((p) => p.name.toLowerCase().includes(q) || (p.category_name || "").toLowerCase().includes(q));
+  return allProducts.filter(
+    (p) =>
+      p.name.toLowerCase().includes(q) ||
+      (p.category_name || "").toLowerCase().includes(q) ||
+      (p.product_code || "").toLowerCase().includes(q)
+  );
 }
 
 function attachRowHandlers(body, items) {
@@ -179,7 +185,7 @@ function renderTable() {
 
   body.innerHTML = pageItems.length
     ? pageItems.map(productRowHtml).join("")
-    : `<tr><td colspan="6">${searchQuery ? "No products match your search." : "No products yet — add your first one."}</td></tr>`;
+    : `<tr><td colspan="7">${searchQuery ? "No products match your search." : "No products yet — add your first one."}</td></tr>`;
 
   attachRowHandlers(body, pageItems);
   renderPagination(totalPages, filtered.length);
@@ -193,13 +199,13 @@ async function loadProducts() {
     renderKpis(products);
     renderTable();
   } catch (e) {
-    body.innerHTML = `<tr><td colspan="6" class="error-text">${e.message}</td></tr>`;
+    body.innerHTML = `<tr><td colspan="7" class="error-text">${e.message}</td></tr>`;
   }
 }
 
 // ---------- Export ----------
 
-const CSV_COLUMNS = ["name", "slug", "category", "price", "currency", "stock_qty", "is_active", "image_url", "description"];
+const CSV_COLUMNS = ["product_id", "name", "slug", "category", "price", "currency", "stock_qty", "is_active", "image_url", "description"];
 
 function csvField(value) {
   const s = value == null ? "" : String(value);
@@ -210,6 +216,7 @@ function productsToCsv(products) {
   const header = CSV_COLUMNS.join(",");
   const rows = products.map((p) =>
     [
+      p.product_code || "",
       p.name,
       p.slug,
       p.category_name || "",
@@ -328,13 +335,23 @@ async function importProductsFromCsv(file) {
   }
 
   const dataRows = rows.slice(1);
-  if (!confirm(`Import ${dataRows.length} row${dataRows.length === 1 ? "" : "s"} from this file? Existing products with a matching slug will be updated; everything else is created new.`)) {
-    return;
-  }
+  const hasProductIdColumn = colIndex.product_id !== undefined;
+  const confirmMsg = hasProductIdColumn
+    ? `Import ${dataRows.length} row${dataRows.length === 1 ? "" : "s"} from this file? Rows with a Product ID matching an existing product will update it; everything else (blank or unrecognized Product ID) is created new.`
+    : `Import ${dataRows.length} row${dataRows.length === 1 ? "" : "s"} from this file? This file has no "product_id" column, so every row will be created as a new product.`;
+  if (!confirm(confirmMsg)) return;
 
   const cell = (row, col) => (colIndex[col] !== undefined ? (row[colIndex[col]] || "").trim() : "");
 
-  const existingBySlug = new Map(allProducts.map((p) => [p.slug, p]));
+  // Keyed by product_code, not slug -- this is the field the user manages as
+  // this product's stable identity, so it's also the upsert key: a row whose
+  // Product ID matches an existing product updates it; anything else
+  // (blank, or a code that doesn't match anything yet) creates a new one.
+  // The map is updated after every create/update below, so a second row in
+  // the same file reusing the same Product ID resolves as an update instead
+  // of colliding with the first row's insert (which the DB's unique
+  // constraint would otherwise reject as a duplicate).
+  const existingByCode = new Map(allProducts.filter((p) => p.product_code).map((p) => [p.product_code.toLowerCase(), p]));
   const { categories: existingCategories } = await window.vendorApi.categories.list();
   const categoryByName = new Map(existingCategories.map((c) => [c.name.toLowerCase(), c.id]));
 
@@ -346,6 +363,7 @@ async function importProductsFromCsv(file) {
     const rowNum = i + 2; // +1 for header, +1 for 1-indexing
     const name = cell(row, "name");
     const priceStr = cell(row, "price");
+    const productCode = cell(row, "product_id");
 
     if (!name) { errors.push(`Row ${rowNum}: missing name — skipped.`); continue; }
     const price = Number(priceStr);
@@ -382,12 +400,16 @@ async function importProductsFromCsv(file) {
     };
 
     try {
-      const existing = existingBySlug.get(slug);
+      const existing = productCode ? existingByCode.get(productCode.toLowerCase()) : null;
       if (existing) {
-        await window.vendorApi.products.update(existing.id, payload);
+        await window.vendorApi.products.update(existing.id, { ...payload, product_code: existing.product_code });
         updated++;
       } else {
-        await window.vendorApi.products.create(payload);
+        payload.product_code = productCode || null; // blank -> server auto-assigns the next P-000001-style id
+        const result = await window.vendorApi.products.create(payload);
+        if (result.product_code) {
+          existingByCode.set(result.product_code.toLowerCase(), { id: result.id, product_code: result.product_code });
+        }
         created++;
       }
     } catch (e) {

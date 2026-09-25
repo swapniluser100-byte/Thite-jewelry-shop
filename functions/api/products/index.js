@@ -1,4 +1,4 @@
-import { all, run } from "../../lib/db.js";
+import { all, run, formatProductCode, isUniqueConstraintError } from "../../lib/db.js";
 import { ok, error } from "../../lib/response.js";
 import { requireProductAccess } from "../../lib/auth.js";
 
@@ -65,20 +65,37 @@ export async function onRequestPost({ request, env }) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
-  const result = await run(
-    env.DB,
-    `INSERT INTO products (name, slug, description, price_cents, currency, category_id, image_url, stock_qty, is_active)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    body.name,
-    slug,
-    body.description || "",
-    body.price_cents,
-    body.currency || "INR",
-    body.category_id || null,
-    body.image_url || "",
-    body.stock_qty ?? 0,
-    body.is_active ?? 1
-  );
+  const requestedCode = (body.product_code || "").trim() || null;
 
-  return ok({ id: result.meta.last_row_id });
+  try {
+    const result = await run(
+      env.DB,
+      `INSERT INTO products (name, slug, product_code, description, price_cents, currency, category_id, image_url, stock_qty, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      body.name,
+      slug,
+      requestedCode,
+      body.description || "",
+      body.price_cents,
+      body.currency || "INR",
+      body.category_id || null,
+      body.image_url || "",
+      body.stock_qty ?? 0,
+      body.is_active ?? 1
+    );
+    const id = result.meta.last_row_id;
+
+    // No Product ID given -> suggest the next one now that we know the new
+    // row's id. Still just a suggestion: the vendor can change it later.
+    let productCode = requestedCode;
+    if (!productCode) {
+      productCode = formatProductCode(id);
+      await run(env.DB, "UPDATE products SET product_code = ? WHERE id = ?", productCode, id);
+    }
+
+    return ok({ id, product_code: productCode });
+  } catch (e) {
+    if (isUniqueConstraintError(e)) return error("That Product ID is already in use by another product.", 409);
+    throw e;
+  }
 }

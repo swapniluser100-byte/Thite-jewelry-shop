@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS products (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   name          TEXT NOT NULL,
   slug          TEXT NOT NULL UNIQUE,
+  product_code  TEXT,        -- vendor-facing id, e.g. "P-000001" (see idx_products_code below); system-suggested on create, editable after
   description   TEXT,
   price_cents   INTEGER NOT NULL,
   currency      TEXT NOT NULL DEFAULT 'INR',
@@ -27,6 +28,16 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active);
+
+-- product_code was added after this table already existed in some
+-- deployments, where CREATE TABLE IF NOT EXISTS above is a no-op -- for
+-- those, run once (safe to skip if the column is already there):
+--   ALTER TABLE products ADD COLUMN product_code TEXT;
+-- The two statements below are safe to re-run everywhere (fresh installs
+-- included): they only touch rows that don't have a code yet, and the
+-- index creation is a no-op once it already exists.
+UPDATE products SET product_code = 'P-' || substr('000000' || id, -6, 6) WHERE product_code IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_products_code ON products(product_code);
 
 CREATE TABLE IF NOT EXISTS customers (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,

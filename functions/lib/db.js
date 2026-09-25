@@ -29,3 +29,12 @@ export function generateOrderNumber() {
 export function nowIso() {
   return new Date().toISOString().replace("T", " ").slice(0, 19);
 }
+
+// Formats a product's display id, e.g. id 7 -> "P-000007".
+export function formatProductCode(id) {
+  return `P-${String(id).padStart(6, "0")}`;
+}
+
+export function isUniqueConstraintError(e) {
+  return /UNIQUE constraint failed/i.test((e && e.message) || "");
+}
