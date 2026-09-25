@@ -14,7 +14,7 @@
   // setting loads (or if it's ever unreachable), so the gate still runs.
   let CUSTOMER_ID = "asmcDHaHEEktePc";
   const APP_NAME = "Thite Jewelry Shop";
-  const SUPPORT_EMAIL = "sitepragati@gmail.com";
+  const SUPPORT_EMAIL = "support@sitepragati.in";
 
   function formatDate(iso) {
     if (!iso) return "";

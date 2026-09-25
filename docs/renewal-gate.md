@@ -183,7 +183,7 @@ specific except the file-based routing location.
   const CUSTOMER_INFO_API = "/api/renewal-status";
   const CUSTOMER_ID = "YOUR_CUSTOMER_ID_HERE"; // <-- change per project
   const APP_NAME = "Your App Name";              // <-- shown if business_name is empty
-  const SUPPORT_EMAIL = "sitepragati@gmail.com";
+  const SUPPORT_EMAIL = "support@sitepragati.in";
 
   function formatDate(iso) {
     if (!iso) return "";
