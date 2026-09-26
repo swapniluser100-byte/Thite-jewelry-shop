@@ -27,6 +27,8 @@ async function loadProduct() {
   document.getElementById("price").value = (product.price_cents / 100).toFixed(2);
   document.getElementById("stock_qty").value = product.stock_qty;
   document.getElementById("image_url").value = product.image_url || "";
+  document.getElementById("color").value = product.color || "";
+  document.getElementById("variant_group").value = product.variant_group || "";
   document.getElementById("is_active").checked = !!product.is_active;
   await loadCategories(product.category_id);
 }
@@ -55,6 +57,8 @@ async function handleSubmit(e) {
       stock_qty: parseInt(document.getElementById("stock_qty").value, 10),
       category_id: categoryId || null,
       image_url: document.getElementById("image_url").value,
+      color: document.getElementById("color").value.trim() || null,
+      variant_group: document.getElementById("variant_group").value.trim() || null,
       is_active: document.getElementById("is_active").checked ? 1 : 0,
     };
 

@@ -43,7 +43,7 @@ export async function onRequestPut({ request, params, env }) {
     await run(
       env.DB,
       `UPDATE products SET name=?, description=?, price_cents=?, currency=?, category_id=?,
-         image_url=?, stock_qty=?, is_active=?, product_code=?, updated_at=datetime('now') WHERE id=?`,
+         image_url=?, stock_qty=?, is_active=?, product_code=?, color=?, variant_group=?, updated_at=datetime('now') WHERE id=?`,
       body.name,
       body.description || "",
       body.price_cents,
@@ -53,6 +53,8 @@ export async function onRequestPut({ request, params, env }) {
       body.stock_qty ?? 0,
       body.is_active ?? 1,
       productCode,
+      (body.color || "").trim() || null,
+      (body.variant_group || "").trim() || null,
       params.id
     );
     return ok();

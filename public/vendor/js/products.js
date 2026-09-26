@@ -56,7 +56,10 @@ function productRowHtml(p) {
   return `
     <tr>
       <td><span class="helper-text" style="font-family:monospace;">${p.product_code || "—"}</span></td>
-      <td><a class="row-link" href="/vendor/html/product-edit.html?id=${p.id}">${p.name}</a></td>
+      <td>
+        <a class="row-link" href="/vendor/html/product-edit.html?id=${p.id}">${p.name}</a>
+        ${p.color ? `<div class="helper-text" style="font-size:0.78rem;">${p.color}</div>` : ""}
+      </td>
       <td>${p.category_name ? `<span class="category-pill" style="background:${categoryColor(p.category_name)}">${p.category_name}</span>` : "—"}</td>
       <td>${window.formatMoney(p.price_cents, p.currency)}</td>
       <td>
@@ -205,7 +208,7 @@ async function loadProducts() {
 
 // ---------- Export ----------
 
-const CSV_COLUMNS = ["product_id", "name", "slug", "category", "price", "currency", "stock_qty", "is_active", "image_url", "description"];
+const CSV_COLUMNS = ["product_id", "name", "slug", "category", "price", "currency", "stock_qty", "is_active", "image_url", "description", "color", "color_group"];
 
 function csvField(value) {
   const s = value == null ? "" : String(value);
@@ -226,6 +229,8 @@ function productsToCsv(products) {
       p.is_active ? "Yes" : "No",
       p.image_url || "",
       p.description || "",
+      p.color || "",
+      p.variant_group || "",
     ]
       .map(csvField)
       .join(",")
@@ -397,6 +402,8 @@ async function importProductsFromCsv(file) {
       image_url: cell(row, "image_url"),
       stock_qty: Number(cell(row, "stock_qty")) || 0,
       is_active: parseBoolean(cell(row, "is_active")) ? 1 : 0,
+      color: cell(row, "color") || null,
+      variant_group: cell(row, "color_group") || null,
     };
 
     try {

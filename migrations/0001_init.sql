@@ -22,17 +22,23 @@ CREATE TABLE IF NOT EXISTS products (
   image_url     TEXT,
   stock_qty     INTEGER NOT NULL DEFAULT 0,
   is_active     INTEGER NOT NULL DEFAULT 1,
+  color         TEXT,        -- e.g. "Rose Gold" -- purely a label, shown on the color swatches below
+  variant_group TEXT,        -- shared across a product's color siblings, e.g. all colors of "Beaded Bracelet" use the same value here
   created_at    TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active);
+CREATE INDEX IF NOT EXISTS idx_products_variant_group ON products(variant_group);
 
--- product_code was added after this table already existed in some
--- deployments, where CREATE TABLE IF NOT EXISTS above is a no-op -- for
--- those, run once (safe to skip if the column is already there):
+-- product_code, color and variant_group were each added after this table
+-- already existed in some deployments, where CREATE TABLE IF NOT EXISTS
+-- above is a no-op -- for those, run once (safe to skip if a column is
+-- already there):
 --   ALTER TABLE products ADD COLUMN product_code TEXT;
+--   ALTER TABLE products ADD COLUMN color TEXT;
+--   ALTER TABLE products ADD COLUMN variant_group TEXT;
 -- The two statements below are safe to re-run everywhere (fresh installs
 -- included): they only touch rows that don't have a code yet, and the
 -- index creation is a no-op once it already exists.
