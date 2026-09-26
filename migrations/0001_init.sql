@@ -161,4 +161,6 @@ INSERT OR IGNORE INTO settings (key, value) VALUES
   ('business_address', ''),
   ('instagram_url', ''),
   ('business_name', ''),
-  ('customer_id', 'asmcDHaHEEktePc');
+  ('customer_id', 'asmcDHaHEEktePc'),
+  ('shipping_fee_maharashtra', '120'),
+  ('shipping_fee_other', '180');

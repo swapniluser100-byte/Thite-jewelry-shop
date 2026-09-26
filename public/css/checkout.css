@@ -100,6 +100,16 @@
   font-weight: 700; padding: 8px 18px 8px 14px;
 }
 .upi-amount { font-size: 2.1rem; font-weight: 800; color: var(--color-success); }
+.upi-whatsapp-note {
+  margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--color-line); text-align: left;
+}
+.upi-whatsapp-note p { margin: 0 0 12px; font-size: 0.85rem; color: var(--color-ink-soft); line-height: 1.5; }
+.upi-whatsapp-note strong { color: var(--color-ink); }
+.upi-whatsapp-note .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  color: #1da851; border-color: #1da851;
+}
+.upi-whatsapp-note .btn:hover { background: #e9f9ef; }
 .upi-card__tagline {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   margin-top: auto; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.02em;

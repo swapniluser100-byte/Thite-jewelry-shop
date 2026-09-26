@@ -3,6 +3,22 @@ import { ok, error } from "../../lib/response.js";
 import { requireRole } from "../../lib/auth.js";
 import { sendOrderConfirmationEmail } from "../../lib/email.js";
 
+// Vendor-configurable (Vendor Portal → Settings → Payment → Shipping Fee).
+// Tolerates the common ways someone actually types the state ("MH",
+// "Maharastra", extra spaces/case) rather than requiring an exact match.
+function isMaharashtra(state) {
+  const normalized = (state || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+  return normalized === "maharashtra" || normalized === "maharastra" || normalized === "mh";
+}
+
+async function shippingFeeCents(db, state) {
+  const rows = await all(db, "SELECT key, value FROM settings WHERE key IN ('shipping_fee_maharashtra', 'shipping_fee_other')");
+  const settings = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  const feeMaharashtra = Math.round((parseFloat(settings.shipping_fee_maharashtra) || 120) * 100);
+  const feeOther = Math.round((parseFloat(settings.shipping_fee_other) || 180) * 100);
+  return isMaharashtra(state) ? feeMaharashtra : feeOther;
+}
+
 // GET /api/orders  -> shop-admin only: list all orders (optionally filter by status)
 // POST /api/orders -> public: place a new order from the cart/checkout page
 export async function onRequestGet({ request, env }) {
@@ -51,7 +67,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
     });
   }
 
-  const shippingCents = subtotalCents >= 200000 ? 0 : 4900; // free shipping over 2000.00, else flat 49.00 (in the smallest currency unit *100)
+  const shippingCents = await shippingFeeCents(env.DB, shipping.state);
   const totalCents = subtotalCents + shippingCents;
 
   // Upsert the customer by email OR phone so repeat buyers accumulate order

@@ -123,6 +123,21 @@
             <textarea id="payment_instructions" rows="3"></textarea>
           </div>
         </div>
+
+        <div class="card" style="max-width:640px;">
+          <h3 style="margin-top:0;">Shipping Fee</h3>
+          <p class="helper-text">Charged automatically at checkout, based on the customer's delivery state.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="shipping_fee_maharashtra">Maharashtra (&#8377;)</label>
+              <input id="shipping_fee_maharashtra" type="number" step="0.01" min="0" placeholder="120.00" />
+            </div>
+            <div class="field">
+              <label for="shipping_fee_other">All other states (&#8377;)</label>
+              <input id="shipping_fee_other" type="number" step="0.01" min="0" placeholder="180.00" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="settings-panel" data-panel="access">

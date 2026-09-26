@@ -12,6 +12,8 @@ const FIELDS = [
   "payment_qr_image_url",
   "payment_upi_id",
   "payment_instructions",
+  "shipping_fee_maharashtra",
+  "shipping_fee_other",
 ];
 
 // Vendors naturally paste the link Google Drive's "Share" button gives them

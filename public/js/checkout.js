@@ -1,11 +1,41 @@
 let currentOrder = null;
+let cachedSettings = null;
 
 const RECEIPT_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6"/></svg>`;
 
-function renderSummary() {
+async function getSettings() {
+  if (cachedSettings) return cachedSettings;
+  try {
+    const { settings } = await window.api.settings.get();
+    cachedSettings = settings;
+  } catch {
+    cachedSettings = {};
+  }
+  return cachedSettings;
+}
+
+// Vendor-configurable (Vendor Portal → Settings → Payment → Shipping Fee).
+// Tolerates the common ways someone actually types the state ("MH",
+// "Maharastra", extra spaces/case) — matches the same check the order API
+// makes server-side, so this estimate and the real charged amount agree.
+function isMaharashtra(state) {
+  const normalized = (state || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+  return normalized === "maharashtra" || normalized === "maharastra" || normalized === "mh";
+}
+
+function shippingCentsForState(state, settings) {
+  const feeMaharashtra = Math.round((parseFloat(settings.shipping_fee_maharashtra) || 120) * 100);
+  const feeOther = Math.round((parseFloat(settings.shipping_fee_other) || 180) * 100);
+  return isMaharashtra(state) ? feeMaharashtra : feeOther;
+}
+
+async function renderSummary() {
   const items = window.cartStore.getItems();
   const subtotal = window.cartStore.subtotalCents();
-  const estimatedTotal = subtotal >= 200000 ? subtotal : subtotal + 4900;
+  const settings = await getSettings();
+  const stateValue = document.getElementById("state")?.value || "";
+  const shippingCents = shippingCentsForState(stateValue, settings);
+  const estimatedTotal = subtotal + shippingCents;
   const summary = document.getElementById("checkout-summary");
   summary.innerHTML = `
     <div class="checkout-summary__header">
@@ -17,6 +47,7 @@ function renderSummary() {
     </div>
     <div class="checkout-summary__totals">
       <div class="checkout-summary__row"><span>Subtotal</span><span>${window.formatMoney(subtotal)}</span></div>
+      <div class="checkout-summary__row"><span>Shipping${stateValue ? "" : " (est.)"}</span><span>${window.formatMoney(shippingCents)}</span></div>
       <div class="checkout-summary__row checkout-summary__row--total"><span>Estimated total</span><span>${window.formatMoney(estimatedTotal)}</span></div>
     </div>
   `;
@@ -127,7 +158,7 @@ async function showPaymentStep(order, items) {
   renderPaymentSummary(order, items);
 
   try {
-    const { settings } = await window.api.settings.get();
+    const settings = await getSettings();
     document.getElementById("payment-instructions").textContent =
       settings.payment_instructions || "Scan the QR code to pay, then enter your transaction reference below.";
 
@@ -147,6 +178,17 @@ async function showPaymentStep(order, items) {
     upiIdEl.innerHTML = settings.payment_upi_id
       ? `<span class="upi-pill__badge">UPI</span><span class="upi-pill__value">${settings.payment_upi_id}</span>`
       : "";
+
+    const waNote = document.getElementById("whatsapp-note");
+    if (settings.business_phone) {
+      const digits = settings.business_phone.replace(/[^\d]/g, "");
+      document.getElementById("whatsapp-number-text").textContent = settings.business_phone;
+      const message = `Hi, sharing my payment screenshot for order ${order.order_number}.`;
+      document.getElementById("whatsapp-link").href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+      waNote.hidden = false;
+    } else {
+      waNote.hidden = true;
+    }
   } catch {
     /* settings failed to load; QR box still shows with fallback image */
   }
@@ -176,4 +218,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   renderSummary();
   document.getElementById("checkout-form").addEventListener("submit", placeOrder);
+  document.getElementById("state").addEventListener("input", renderSummary);
 });
