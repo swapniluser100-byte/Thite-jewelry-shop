@@ -18,8 +18,16 @@ export function orderConfirmationEmail({ brand, order, items, customer }) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
       ${itemsHtml}
       <tr>
-        <td style="padding:12px 0 0;font-weight:bold;">Total</td>
-        <td style="padding:12px 0 0;font-weight:bold;text-align:right;">${formatMoney(order.total_cents, order.currency)}</td>
+        <td style="padding:12px 0 0;color:#6b5d54;">Subtotal</td>
+        <td style="padding:12px 0 0;text-align:right;color:#6b5d54;">${formatMoney(order.subtotal_cents, order.currency)}</td>
+      </tr>
+      <tr>
+        <td style="padding:4px 0 0;color:#6b5d54;">Shipping</td>
+        <td style="padding:4px 0 0;text-align:right;color:#6b5d54;">${formatMoney(order.shipping_cents, order.currency)}</td>
+      </tr>
+      <tr>
+        <td style="padding:10px 0 0;border-top:1px solid #e8ddd3;font-weight:bold;">Total</td>
+        <td style="padding:10px 0 0;border-top:1px solid #e8ddd3;font-weight:bold;text-align:right;">${formatMoney(order.total_cents, order.currency)}</td>
       </tr>
     </table>
     <p style="margin:20px 0 6px;color:#6b5d54;">Shipping to:</p>
